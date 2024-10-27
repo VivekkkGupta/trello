@@ -4,8 +4,9 @@ import Userdashboard from './components/User/Userdashboard'
 
 function App() {
   return (
-    <div className='relative h-screen w-full  font-segoe'>
+    <div className='relative h-screen w-full font-roboto'>
       {/* <Loginpage /> */}
+
       <Userdashboard />
     </div>
   )

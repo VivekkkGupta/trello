@@ -1,11 +1,15 @@
-import React from 'react'
-import Navbar from '../Navbar/Navbar'
-import Sidebar from '../Sidebar/Sidebar'
-import Maincontent from '../Maincontent/Maincontent'
+// UserDashboard.jsx
+import React, { useEffect } from 'react';
+import Navbar from '../Navbar/Navbar';
+import Sidebar from '../Sidebar/Sidebar';
+import Maincontent from '../Maincontent/Maincontent';
+import { useTrelloContext } from '../../contexts/TrelloContext';
 
-function Userdashboard() {
+function UserDashboard() {
+    const { selectedColor } = useTrelloContext();
+
     return (
-        <div className="w-full h-full bg-gradient-to-br from-[#8061C5] to-[#E073BC]">
+        <div className={`w-full h-full ${selectedColor} text-white`}>
             <Navbar />
             <div className="flex h-[calc(100%-3rem)] overflow-hidden">
                 <Sidebar className="h-full" />
@@ -15,5 +19,4 @@ function Userdashboard() {
     );
 }
 
-
-export default Userdashboard
+export default UserDashboard;

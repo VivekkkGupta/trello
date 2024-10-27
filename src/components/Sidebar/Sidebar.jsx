@@ -1,15 +1,60 @@
-import React from 'react'
-
-
+import React, { useState } from 'react';
+import { useTrelloContext } from '../../contexts/TrelloContext';
+import ColorPanel from './ColorPanel'
 
 function Sidebar() {
+    const { isSidebarOpen, toggleSidebar,
+        isColorPanelOpen, setIsColorPanelOpen, toggleColorPanel, selectedColor
+    } = useTrelloContext();
+
     return (
-        <div className='relative h-full w-1/5 bg-opacity-30 bg-white '>
-            <div className='absolute right-2 top-3 bg-white rounded-full h-8 w-8 flex items-center justify-center'>
-                <i className="ri-arrow-drop-right-line text-2xl"></i>
+        <div className={`relative h-full ${isSidebarOpen ? "w-1/5" : "w-6"} bg-opacity-50 bg-black transition-all duration-200`}>
+            <div className={`absolute ${isSidebarOpen ? "right-2 rotate-[180deg]" : "right-[-50%] rotate-0"} top-2 bg-white opacity-80 rounded-full h-8 w-8 flex items-center justify-center transition-all duration-200 cursor-pointer`}
+                onClick={toggleSidebar}
+            >
+                <i className="ri-arrow-drop-right-line text-2xl text-black"></i>
             </div>
+
+            {isSidebarOpen && (
+                <>
+                    <div className='nameplate h-12 w-full flex items-center justify-center border-b-[1px] border-white border-opacity-40 text-xl font-[500]'>
+                        Hello Vivek
+                    </div>
+
+                    <ColorPanel />
+
+                    <div className='options flex flex-col border-b-[1px] border-white border-opacity-40'>
+                        <div className='w-full h-9 flex items-center gap-2 p-3 font-[500]'>
+                            <i className="ri-dashboard-fill"></i>
+                            Board Views
+                        </div>
+                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic'>
+                            <i className="ri-layout-column-line"></i>
+                            Cards
+                        </div>
+                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic'>
+                            <i className="ri-list-check"></i>
+                            List
+                        </div>
+                    </div>
+
+                    <div className='w-full flex items-center mt-1 flex-col'>
+                        <div className='w-full flex items-center gap-2 font-[500] p-3'>
+                            Change Background
+                        </div>
+                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic' onClick={toggleColorPanel}>
+                            <span className={`h-6 w-6 ${selectedColor} rounded-sm`}></span>
+                            Colors
+                        </div>
+                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic'>
+                            <span className="h-6 w-6 bg-white rounded-sm"></span>
+                            Images
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
-    )
+    );
 }
 
-export default Sidebar
+export default Sidebar;

@@ -1,8 +1,9 @@
 import React from 'react'
+import TaskBoard from './Taskboard'
 
 function Maincontent() {
     return (
-        <div>Maincontent</div>
+        <TaskBoard />
     )
 }
 
