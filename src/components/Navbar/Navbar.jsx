@@ -2,7 +2,7 @@ import React from 'react'
 
 function Navbar() {
     return (
-        <div className='h-[3rem] bg-opacity-60 bg-black border-b-[1px] border-opacity-50 border-white'>
+        <div className='h-[3rem] bg-opacity-60 bg-black border-b-[1px] border-opacity-40 border-gray-100'>
             <div className='innerdiv flex h-full w-full items-center justify-between px-10'>
                 <div className='leftitems flex gap-[4rem] items-center'>
                     <div className='text-2xl font-bold'>Trello</div>
