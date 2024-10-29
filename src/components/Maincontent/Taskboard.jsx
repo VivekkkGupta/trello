@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Taskcard from './Taskcard';
 
 const initialTasks = [
-    { id: '1', title: 'Task 1', description: 'This is a completed task', state: 'completed' },
-    { id: '2', title: 'Task 2', description: 'This task is on hold', state: 'onHold' },
-    { id: '3', title: 'Task 3', description: 'This task failed', state: 'failed' },
-    { id: '4', title: 'Task 4', description: 'This task is in progress', state: 'inProgress' },
+    { id: '1', title: 'Ticket 1', description: 'This is a completed task', state: 'Resolved' },
+    { id: '2', title: 'Ticket 2', description: 'This task is on hold', state: 'onHold' },
+    { id: '3', title: 'Ticket 3', description: 'This task failed', state: 'failed' },
+    { id: '4', title: 'Ticket 4', description: 'This task is in progress', state: 'inProgress' },
 ];
 
 const Taskboard = () => {
