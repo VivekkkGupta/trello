@@ -25,6 +25,13 @@ export const TrelloProvider = ({ children }) => {
         localStorage.setItem('bgcolorofdashboard', selectedColor);
     }, [selectedColor]);
 
+    // Loginpage
+    const [signupClicked,setSignupClicked] = useState(false)
+
+    const handleSignupButton = () => {
+        setSignupClicked(!signupClicked);
+    };
+
     const values = {
         isSidebarOpen,
         toggleSidebar,
@@ -32,6 +39,9 @@ export const TrelloProvider = ({ children }) => {
         toggleColorPanel,
         selectedColor,
         setSelectedColor,
+        signupClicked,
+        setSignupClicked,
+        handleSignupButton,
     };
 
     return (
