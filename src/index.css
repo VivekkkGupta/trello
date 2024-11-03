@@ -49,3 +49,22 @@ body {
   border-radius: 8px;
   padding: 8px;
 }
+
+/* Custom scrollbar styles */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-visible:hover::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.scrollbar-visible:hover::-webkit-scrollbar-thumb {
+  background-color: #3490dc; /* Customize color */
+  border-radius: 4px;
+}
+
+.scrollbar-visible:hover::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}

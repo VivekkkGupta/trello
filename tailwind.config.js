@@ -5,6 +5,10 @@ export default {
     extend: {
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],
+        scrollbar: {
+          hidden: "scrollbar-hide",
+          visible: "scrollbar-show",
+        },
       },
     },
   },
