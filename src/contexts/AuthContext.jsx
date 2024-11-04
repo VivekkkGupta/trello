@@ -1,12 +1,18 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { AdminData, UserData } from "./AuthData";
+import { useTrelloContext } from "./TrelloContext";
 
 export const AuthContext = createContext(null);
 
 export const useAuthContext = () => useContext(AuthContext);
 
+
 export const AuthProvider = ({ children }) => {
 
+  //Navbar Page UseStates
+  const [showProfileDropDown, setShowProfileDropDown] = useState(false);
+
+  // Login Page UseStates
   const [signupClicked, setSignupClicked] = useState(false);
 
   const handleSignupButton = () => {
@@ -63,9 +69,17 @@ export const AuthProvider = ({ children }) => {
       if (admin && admin.password === userInputData.password) {
         setLocalAuthData(admin);
         getCurrentUserFromLocalStorageAndSave();
+        setUserInputData({
+          email: "",
+          password: "",
+        })
       } else if (user && user.password === userInputData.password) {
         setLocalAuthData(user);
         getCurrentUserFromLocalStorageAndSave();
+        setUserInputData({
+          email: "",
+          password: "",
+        })
       } else {
         setUserInputErrors({
           ...userInputErrors,
@@ -95,13 +109,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('LocalAuthData');
+    setCurrentUser(null);
+    setShowProfileDropDown(false);
+  }
+
   useEffect(() => {
     getCurrentUserFromLocalStorageAndSave();
   }, []);
 
-//   useEffect(()=>{
-//     console.log("user changed to : ",currentUser)
-//   },[currentUser])
+  // useEffect(()=>{
+
+  // },[currentUser])
 
   const values = {
     AdminData,
@@ -116,7 +136,8 @@ export const AuthProvider = ({ children }) => {
     setUserInputErrors,
     handleInputBox,
     handleLoginButton,
-    currentUser
+    currentUser, setCurrentUser,
+    handleLogout, showProfileDropDown, setShowProfileDropDown
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

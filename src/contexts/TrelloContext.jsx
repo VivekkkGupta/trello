@@ -7,7 +7,7 @@ export const useTrelloContext = () => useContext(TrelloContext);
 export const TrelloProvider = ({ children }) => {
 
   //Navbar
-  const [logoutDropDown,setLogoutDropDown] = useState(false)
+
 
   // Sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -31,7 +31,7 @@ export const TrelloProvider = ({ children }) => {
     localStorage.setItem("bgcolorofdashboard", selectedColor);
   }, [selectedColor]);
 
-  
+
 
   const values = {
     isSidebarOpen,
@@ -40,7 +40,6 @@ export const TrelloProvider = ({ children }) => {
     toggleColorPanel,
     selectedColor,
     setSelectedColor,
-    logoutDropDown,setLogoutDropDown
   };
 
   return (

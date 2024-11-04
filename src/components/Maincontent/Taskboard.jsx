@@ -1,24 +1,12 @@
 import React, { useState } from 'react';
 import Taskcard from './Taskcard';
-
-// Utility function to generate unique task IDs
-const generateTaskId = () => Math.floor(Math.random() * 100000).toString();
-
-// Initial array of tasks
-const initialTasks = [
-    { id: generateTaskId(), title: 'Task 1', description: 'This is a task in todos', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 2', description: 'This is another task in todos', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 3', description: 'This task is in progress', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 4', description: 'This is another task in progress', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 5', description: 'This task is completed', state: 'done' },
-    { id: generateTaskId(), title: 'Task 6', description: 'This task has failed', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 6', description: 'This task has failed', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 6', description: 'This task has failed', state: 'failed' },
-    { id: generateTaskId(), title: 'Task 6', description: 'This task has failed', state: 'failed' },
-];
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const Taskboard = () => {
-    const [tasks, setTasks] = useState(initialTasks);
+
+    const { currentUser, setCurrentUser } = useAuthContext()
+
+    const [tasks, setTasks] = useState(currentUser["tasks"]);
     const [draggedTask, setDraggedTask] = useState(null);
     const [hoveredColumn, setHoveredColumn] = useState(null);
 
