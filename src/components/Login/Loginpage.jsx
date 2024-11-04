@@ -5,7 +5,7 @@ import { useTrelloContext } from '../../contexts/TrelloContext'
 
 function Loginpage() {
 
-    const {signupClicked,setSignupClicked}= useTrelloContext()
+    const { signupClicked, setSignupClicked } = useTrelloContext()
 
     return (
         <div className='w-full h-full bg-gray-400 flex items-center justify-center'>
@@ -18,9 +18,9 @@ function Loginpage() {
                         Modern Ticketing Tool
                     </h2>
                 </div>
-                <div className='rounded-md bg-white bg-opacity-60 w-full h-full shadow-lg flex items-center justify-center flex-col'>
+                <div className='rounded-md bg-white bg-opacity-60 w-full h-full shadow-lg flex items-center justify-center flex-col gap-2'>
                     {
-                        signupClicked === true ? <Signupform/> :<Loginform/>
+                        signupClicked === true ? <Signupform /> : <Loginform />
                     }
                 </div>
             </div>

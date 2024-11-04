@@ -1,15 +1,16 @@
-import React from 'react'
-import Loginpage from './components/Login/Loginpage'
-import Userdashboard from './components/User/Userdashboard'
+import React from "react";
+import Loginpage from "./components/Login/Loginpage";
+import Userdashboard from "./components/User/Userdashboard";
+import { useAuthContext } from "./contexts/AuthContext";
 
 function App() {
-  return (
-    <div className='relative h-screen w-full font-roboto'>
-      {/* <Loginpage /> */}
+  const { currentUser } = useAuthContext();
 
-      <Userdashboard />
+  return (
+    <div className="relative h-screen w-full font-roboto">
+      {currentUser["role"] === "admin" ? <Loginpage /> : <Userdashboard />}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
