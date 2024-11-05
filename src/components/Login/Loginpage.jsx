@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import Loginform from './Loginform'
 import Signupform from './Signupform'
-import { useTrelloContext } from '../../contexts/TrelloContext'
+import { useAuthContext } from '../../contexts/AuthContext'
 
 function Loginpage() {
 
-    const { signupClicked, setSignupClicked } = useTrelloContext()
+    const { signupClicked, setSignupClicked } = useAuthContext()
 
     return (
         <div className='w-full h-full bg-gray-400 flex items-center justify-center'>

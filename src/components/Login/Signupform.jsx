@@ -1,7 +1,7 @@
-import { useTrelloContext } from "../../contexts/TrelloContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const Signupform = () => {
-    const {signupClicked,setSignupClicked,handleSignupButton}= useTrelloContext()
+    const {signupClicked,setSignupClicked,handleSignupButton}= useAuthContext()
     return (
         <>
             <div className='flex flex-col md:flex-row items-center justify-between gap-3 mb-10 w-[50%]'>
