@@ -15,6 +15,13 @@ export const TrelloProvider = ({ children }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // IrightSidebar
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+
+  const toggleRightSidebar = () => {
+    setIsRightSidebarOpen((prev) => !prev);
+  };
+
   const [isColorPanelOpen, setIsColorPanelOpen] = useState(false);
   const toggleColorPanel = () => {
     setIsColorPanelOpen(!isColorPanelOpen);
@@ -40,6 +47,7 @@ export const TrelloProvider = ({ children }) => {
     toggleColorPanel,
     selectedColor,
     setSelectedColor,
+    isRightSidebarOpen, toggleRightSidebar,
   };
 
   return (
