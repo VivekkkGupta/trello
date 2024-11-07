@@ -3,7 +3,9 @@ import { useTrelloContext } from '../../contexts/TrelloContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function Rightsidebar() {
-    const { isRightSidebarOpen, toggleRightSidebar } = useTrelloContext();
+    const { isRightSidebarOpen, toggleRightSidebar,
+        handleCurrentTaskInAdminDashboard,currentTask,setCurrentTask
+     } = useTrelloContext();
     const { AdminData, UserData } = useAuthContext();
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
@@ -56,7 +58,7 @@ function Rightsidebar() {
     // Define colors for different statuses
     const statusColors = {
         'done': 'border-green-500',
-        'inprogress': 'border-yellow-500',
+        'progress': 'border-yellow-500',
         'todos': 'border-blue-500',
         'failed': 'border-red-500',
     };
@@ -75,7 +77,7 @@ function Rightsidebar() {
                 </div>
 
                 {isRightSidebarOpen && (
-                    <div className="content p-4 h-[calc(100%-4rem)]">
+                    <div className="content p-3 h-[calc(100%-4rem)]">
                         <div className="relative mb-4">
                             <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center justify-between w-full bg-gray-200 px-3 py-2 rounded-md text-black font-[500]">
                                 <span className="flex items-center">
@@ -137,12 +139,13 @@ function Rightsidebar() {
                         </div>
 
                         {/* Task List with Scrollbar */}
-                        <div className="task-list h-full custom-scrollbar overflow-y-auto pr-2">
+                        <div className="task-list h-full custom-scrollbar overflow-y-auto pr-2 text-gray-600">
                             {filteredTasks.map((task) => (
-                                <div key={task.id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-b-4 bg-white ${statusColors[task.state.toLowerCase()]}`}>
+                                <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task.id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state.toLowerCase()]}`}>
+                                    <div className='text-sm'># {task.id}</div>
                                     <h3 className="text-gray-800 font-semibold">{task.title}</h3>
                                     <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                                    <p className={`text-sm font-medium text-gray-900 px-2 py-1 rounded-lg`}>
+                                    <p className={`text-sm font-medium text-gray-900 px-0 py-1 rounded-lg`}>
                                         Status: {task.state}
                                     </p>
                                 </div>

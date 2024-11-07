@@ -17,12 +17,12 @@ const UserData = [
         password: 'yash123',
         role: 'user',
         tasks: [
-            { id: 1, title: 'Task 1', description: 'This is a task in todos', state: 'todos' },
-            { id: 2, title: 'Task 2', description: 'This is another task in todos', state: 'todos' },
-            { id: 3, title: 'Task 3', description: 'This task is in progress', state: 'inProgress' },
-            { id: 4, title: 'Task 5', description: 'This task is completed', state: 'done' },
-            { id: 5, title: 'Task 5', description: 'This task is completed', state: 'done' },
-            { id: 6, title: 'Task 5', description: 'This task is completed', state: 'failed' },
+            { id: 1, title: 'Task 1', description: 'This is a task in todos', state: 'Todos' },
+            { id: 2, title: 'Task 2', description: 'This is another task in todos', state: 'Todos' },
+            { id: 3, title: 'Task 3', description: 'This task is in progress', state: 'Progress' },
+            { id: 4, title: 'Task 5', description: 'This task is completed', state: 'Done' },
+            { id: 5, title: 'Task 5', description: 'This task is completed', state: 'Done' },
+            { id: 6, title: 'Task 5', description: 'This task is completed', state: 'Failed' },
         ],
     },
     {
@@ -32,8 +32,8 @@ const UserData = [
         password: 'akash123',
         role: 'user',
         tasks: [
-            { id: 7, title: 'Task 1', description: 'This is a task in todos', state: 'todos' },
-            { id: 8, title: 'Task 2', description: 'This is another task in todos', state: 'todos' },
+            { id: 7, title: 'Task 1', description: 'This is a task in todos', state: 'Todos' },
+            { id: 8, title: 'Task 2', description: 'This is another task in todos', state: 'Todos' },
         ],
     }
 ];

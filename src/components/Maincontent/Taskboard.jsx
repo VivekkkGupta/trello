@@ -12,7 +12,7 @@ const Taskboard = () => {
 
     const columnNames = {
         todos: 'To Do',
-        inProgress: 'In Progress',
+        progress: 'In Progress',
         done: 'Completed',
         failed: 'Failed',
     };

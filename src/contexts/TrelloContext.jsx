@@ -39,6 +39,11 @@ export const TrelloProvider = ({ children }) => {
   }, [selectedColor]);
 
 
+  // Admin dashboard
+  const [currentTask,setCurrentTask] = useState(null)
+  const handleCurrentTaskInAdminDashboard = (task) => {
+    setCurrentTask(task)
+  }
 
   const values = {
     isSidebarOpen,
@@ -48,6 +53,7 @@ export const TrelloProvider = ({ children }) => {
     selectedColor,
     setSelectedColor,
     isRightSidebarOpen, toggleRightSidebar,
+    currentTask,setCurrentTask,handleCurrentTaskInAdminDashboard
   };
 
   return (

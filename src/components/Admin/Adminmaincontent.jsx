@@ -1,8 +1,11 @@
 import React from 'react'
+import Createtask from './Createtask'
 
 function Adminmaincontent() {
   return (
-    <div>Adminmaincontent</div>
+    <div className='w-full h-full'>
+      <Createtask/>
+    </div>
   )
 }
 
