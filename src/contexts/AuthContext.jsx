@@ -1,15 +1,14 @@
+// AuthProvider.js
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { AdminData, UserData } from "./AuthData";
-import { useTrelloContext } from "./TrelloContext";
+import { AdminData, UserData } from "../data/AuthData";
+import TaskData from "../data/TaskData";
 
 export const AuthContext = createContext(null);
 
 export const useAuthContext = () => useContext(AuthContext);
 
-
 export const AuthProvider = ({ children }) => {
-
-  //Navbar Page UseStates
+  // Navbar Page UseStates
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
 
   // Login Page UseStates
@@ -60,7 +59,6 @@ export const AuthProvider = ({ children }) => {
 
     if (Object.keys(errors).length === 0) {
       // Login logic here
-
       const user = UserData.find((user) => user.email === userInputData.email);
       const admin = AdminData.find(
         (user) => user.email === userInputData.email
@@ -69,17 +67,11 @@ export const AuthProvider = ({ children }) => {
       if (admin && admin.password === userInputData.password) {
         setLocalAuthData(admin);
         getCurrentUserFromLocalStorageAndSave();
-        setUserInputData({
-          email: "",
-          password: "",
-        })
+        setUserInputData({ email: "", password: "" });
       } else if (user && user.password === userInputData.password) {
         setLocalAuthData(user);
         getCurrentUserFromLocalStorageAndSave();
-        setUserInputData({
-          email: "",
-          password: "",
-        })
+        setUserInputData({ email: "", password: "" });
       } else {
         setUserInputErrors({
           ...userInputErrors,
@@ -92,10 +84,10 @@ export const AuthProvider = ({ children }) => {
   const getLocalAuthData = () => {
     return localStorage.getItem("LocalAuthData")
       ? JSON.parse(localStorage.getItem("LocalAuthData"))
-      : false;
+      : null;
   };
 
-  // Loginpage
+  // Login Page
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
 
   const setLocalAuthData = (data) => {
@@ -103,29 +95,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getCurrentUserFromLocalStorageAndSave = () => {
-    const CurrentUserDataFromLocalStorage = getLocalAuthData();
-    if (CurrentUserDataFromLocalStorage) {
-      setCurrentUser(CurrentUserDataFromLocalStorage);
+    const currentUserData = getLocalAuthData();
+    if (currentUserData) {
+      setCurrentUser(currentUserData);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('LocalAuthData');
+    localStorage.removeItem("LocalAuthData");
     setCurrentUser(null);
     setShowProfileDropDown(false);
-  }
+  };
 
   useEffect(() => {
     getCurrentUserFromLocalStorageAndSave();
   }, []);
 
-  // useEffect(()=>{
-
-  // },[currentUser])
-
   const values = {
     AdminData,
     UserData,
+    TaskData,  // Pass TaskData to the context value
     signupClicked,
     setSignupClicked,
     handleSignupButton,
@@ -135,9 +124,11 @@ export const AuthProvider = ({ children }) => {
     userInputErrors,
     setUserInputErrors,
     handleInputBox,
-    handleLoginButton,
-    currentUser, setCurrentUser,
-    handleLogout, showProfileDropDown, setShowProfileDropDown
+    currentUser,
+    setCurrentUser,
+    handleLogout,
+    showProfileDropDown,
+    setShowProfileDropDown,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

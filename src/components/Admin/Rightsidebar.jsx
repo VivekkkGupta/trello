@@ -3,25 +3,30 @@ import { useTrelloContext } from '../../contexts/TrelloContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function Rightsidebar() {
-    const { isRightSidebarOpen, toggleRightSidebar,
-        handleCurrentTaskInAdminDashboard,currentTask,setCurrentTask
-     } = useTrelloContext();
-    const { AdminData, UserData } = useAuthContext();
+    const {
+        isRightSidebarOpen,
+        toggleRightSidebar,
+        handleCurrentTaskInAdminDashboard,
+    } = useTrelloContext();
+    const { UserData, TaskData, AdminData } = useAuthContext();
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
     const [tempFilters, setTempFilters] = useState(['All']);
-    const [selectedStatusFilters, setSelectedStatusFilters] = useState([]); // New state for status filters
-    const [tempStatusFilters, setTempStatusFilters] = useState([]); // Temp state for status filters
+    const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
+    const [tempStatusFilters, setTempStatusFilters] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
-    const allUsers = [...UserData];
+    // Fetch tasks and filter them based on selected filters
+    const filteredTasks = UserData.flatMap(user =>
+        user.tasksAssigned.map(taskId => {
+            const task = TaskData.find(t => t.id === taskId);
+            if (!task) return null;
 
-    const filteredTasks = allUsers.flatMap(user =>
-        user.tasks.filter(task => {
             const statusMatch = tempStatusFilters.length === 0 || tempStatusFilters.includes(task.state.toLowerCase());
             const userMatch = tempFilters.includes('All') || tempFilters.includes(user.username);
-            return statusMatch && userMatch;
-        })
+
+            return statusMatch && userMatch ? task : null;
+        }).filter(task => task !== null)
     );
 
     const handleTempFilterChange = (user) => {
@@ -103,7 +108,7 @@ function Rightsidebar() {
                                         />
                                         All
                                     </label>
-                                    {allUsers.map(user => (
+                                    {UserData.map(user => (
                                         <label key={user.id} className="flex items-center">
                                             <input
                                                 type="checkbox"

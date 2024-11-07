@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { useTrelloContext } from "../../contexts/TrelloContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 
-const Loginform = () => {
+const LoginForm = () => {
   const {
     signupClicked,
     setSignupClicked,
@@ -14,8 +12,6 @@ const Loginform = () => {
     handleInputBox,
     handleLoginButton,
   } = useAuthContext();
-
-  
 
   return (
     <>
@@ -71,4 +67,4 @@ const Loginform = () => {
   );
 };
 
-export default Loginform;
+export default LoginForm;

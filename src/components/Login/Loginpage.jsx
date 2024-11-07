@@ -5,7 +5,7 @@ import { useAuthContext } from '../../contexts/AuthContext'
 
 function Loginpage() {
 
-    const { signupClicked, setSignupClicked } = useAuthContext()
+    const { signupClicked } = useAuthContext()
 
     return (
         <div className='w-full h-full bg-gray-400 flex items-center justify-center'>
