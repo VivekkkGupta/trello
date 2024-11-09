@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTrelloContext } from "../../contexts/TrelloContext";
 import { useAuthContext } from "../../contexts/AuthContext"; // Import the AuthContext to access user data
+import default_avatar from "../../assets/images/default_avatar.jpg";
 
 function Createtask() {
   const {
@@ -12,19 +13,12 @@ function Createtask() {
     updateTaskData,
   } = useTrelloContext();
 
-  const { UserData, loggedInUser } = useAuthContext(); // Get all users and the logged-in user
+  const { UserData, currentUser } = useAuthContext(); // Get all users and the logged-in user
 
   // Ensure currentTask is defined before accessing its properties
   if (!currentTask) {
     return <div>Loading...</div>; // or show a suitable message or fallback UI
   }
-
-  // Find the user assigned to the task
-  const currentUser = UserData.find((user) => user.username === currentTask.assignedTo);
-
-  // Fallback if assignedTo is null or not found
-  const currentUserAvatar = currentUser?.avatar || "/default-avatar.png";
-  const currentUserName = currentUser?.username || "Unassigned";
 
   const [newNote, setNewNote] = useState(""); // State to handle new note input
 
@@ -47,21 +41,28 @@ function Createtask() {
         ...currentTask,
         notes: [
           ...currentTask.notes,
-          { username: loggedInUser.username, text: newNote, avatar: loggedInUser.avatar }, // Use logged-in user for note submission
+          {
+            username: currentUser.username || "default user name",
+            text: newNote,
+            avatar: currentUser.avatar || "default",
+            timestamp: new Date(),
+          },
         ],
       };
 
       // Update TaskData with the new note
       updateTaskData(currentTask.id, updatedTask);
-      setCurrentTask(updatedTask); // Update the task in state
-      setNewNote(""); // Clear the input field
+      console.log(currentTask);
+      // setCurrentTask(updatedTask); // Update the task in state
+      // setNewNote(""); // Clear the input field
     }
   };
 
   return (
     <div
-      className={`${isRightSidebarOpen ? "w-[calc(100%-20rem)]" : "w-full"
-        } h-full flex items-center justify-center duration-200 transition-all`}
+      className={`${
+        isRightSidebarOpen ? "w-[calc(100%-20rem)]" : "w-full"
+      } h-full flex items-center justify-center duration-200 transition-all`}
     >
       {currentTask && (
         <div className="w-[90%] h-[90%] flex items-center justify-center bg-white bg-opacity-50 rounded-lg relative">
@@ -83,11 +84,38 @@ function Createtask() {
 
               {/* Notes Section - Styled like the description */}
               <div className="mt-6 bg-gray-200 rounded-lg p-4">
+                {/* Input for new note */}
+                <div className="flex items-center justify-between gap-2 h-10 ">
+                  <img
+                    src={currentUser?.avatar || default_avatar}
+                    alt="User Avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <input
+                    type="text"
+                    className="w-4/6 p-2 rounded border-2 border-gray-300 outline-0 border-0"
+                    placeholder="Add a note..."
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                  />
+                  <button
+                    onClick={handleAddNote}
+                    className="w-2/6 h-10 px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                  >
+                    Add Note
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 bg-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold text-xl mb-4">Notes</h3>
                 {/* Display previous notes */}
                 <div className="space-y-4">
                   {currentTask.notes?.map((note, index) => (
-                    <div key={index} className="flex items-start gap-4 bg-gray-100 p-4 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-start gap-4 bg-gray-100 p-4 rounded-lg"
+                    >
                       <img
                         src={note.avatar}
                         alt={`${note.username}'s avatar`}
@@ -100,35 +128,14 @@ function Createtask() {
                     </div>
                   ))}
                 </div>
-
-                {/* Input for new note */}
-                <div className="mt-6 flex items-center gap-4">
-                  <img
-                    src={loggedInUser?.avatar || "/default-avatar.png"}
-                    alt="User Avatar"
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 rounded border-2 border-gray-300"
-                    placeholder="Add a note..."
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                  />
-                  <button
-                    onClick={handleAddNote}
-                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Add Note
-                  </button>
-                </div>
               </div>
             </div>
 
             <div className="bg-gray-100 w-[28%] h-[95%] rounded-lg flex self-end text-sm">
               <div className="w-full p-3 flex flex-col gap-2">
                 <p className="w-full bg-gray-200 rounded-lg p-3">
-                  <span className="font-[500] inline">State : </span> {currentTask.state}
+                  <span className="font-[500] inline">State : </span>{" "}
+                  {currentTask.state}
                 </p>
 
                 <div className="w-full bg-gray-200 rounded-lg p-3">

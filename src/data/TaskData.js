@@ -5,7 +5,14 @@ const TaskData = [
     description: "This is a task in todos",
     state: "Todos",
     assignedTo: "Yash",
-    notes: [],
+    notes: [
+      {
+        username: "Admin",
+        text: "Note added manually ",
+        avatar: "default",
+        timestamp: new Date(),
+      },
+    ],
   },
   {
     id: 2,
