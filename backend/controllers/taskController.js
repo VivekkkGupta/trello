@@ -1,4 +1,4 @@
-import Task, { find } from "../models/Task";
+import Task, { find } from "../models/Task.js";
 
 export async function createTask(req, res) {
   try {
