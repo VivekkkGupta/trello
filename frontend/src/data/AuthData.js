@@ -6,6 +6,7 @@ const AdminData = [
     username: "Admin",
     email: "admin@example.com",
     password: "admin123",
+    avatar: null,
     role: "admin",
   },
 ];
@@ -16,6 +17,7 @@ const UserData = [
     username: "Yash",
     email: "yash@example.com",
     password: "yash123",
+    avatar: null,
     role: "user",
     ...getUserTaskInfo("Yash"),
   },
@@ -24,6 +26,7 @@ const UserData = [
     username: "Akash",
     email: "akash@example.com",
     password: "akash123",
+    avatar: null,
     role: "user",
     ...getUserTaskInfo("Akash"),
   },

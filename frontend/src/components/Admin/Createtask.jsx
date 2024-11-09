@@ -4,13 +4,15 @@ import { useAuthContext } from "../../contexts/AuthContext"; // Import the AuthC
 import default_avatar from "../../assets/images/default_avatar.jpg";
 
 function Createtask() {
+  const [newNote, setNewNote] = useState(""); // State to handle new note input
+
   const {
     isRightSidebarOpen,
     toggleRightSidebar,
     handleCurrentTaskInAdminDashboard,
     currentTask,
     setCurrentTask,
-    updateTaskData,
+    updateTaskDataState,
   } = useTrelloContext();
 
   const { UserData, currentUser } = useAuthContext(); // Get all users and the logged-in user
@@ -20,7 +22,6 @@ function Createtask() {
     return <div>Loading...</div>; // or show a suitable message or fallback UI
   }
 
-  const [newNote, setNewNote] = useState(""); // State to handle new note input
 
   // Handle the change in assigned user
   const handleUserChange = (e) => {
@@ -28,7 +29,7 @@ function Createtask() {
 
     // Update TaskData with the new assigned user
     const updatedTask = { ...currentTask, assignedTo: newAssignedUser };
-    updateTaskData(currentTask.id, updatedTask);
+    updateTaskDataState(currentTask.id, updatedTask);
 
     // Update the currentTask in state to reflect the change in the UI
     setCurrentTask(updatedTask);
@@ -37,21 +38,23 @@ function Createtask() {
   // Handle new note submission
   const handleAddNote = () => {
     if (newNote.trim()) {
+      // console.log(newNote.trim())
       const updatedTask = {
         ...currentTask,
         notes: [
           ...currentTask.notes,
           {
-            username: currentUser.username || "default user name",
-            text: newNote,
-            avatar: currentUser.avatar || "default",
+            userDetails: currentUser,
+            noteId: 3,
+            text: newNote.trim(),
             timestamp: new Date(),
           },
         ],
       };
 
+      // console.log(updatedTask)
       // Update TaskData with the new note
-      updateTaskData(currentTask.id, updatedTask);
+      updateTaskDataState(currentTask.id, updatedTask);
       console.log(currentTask);
       // setCurrentTask(updatedTask); // Update the task in state
       // setNewNote(""); // Clear the input field
@@ -60,9 +63,8 @@ function Createtask() {
 
   return (
     <div
-      className={`${
-        isRightSidebarOpen ? "w-[calc(100%-20rem)]" : "w-full"
-      } h-full flex items-center justify-center duration-200 transition-all`}
+      className={`${isRightSidebarOpen ? "w-[calc(100%-20rem)]" : "w-full"
+        } h-full flex items-center justify-center duration-200 transition-all`}
     >
       {currentTask && (
         <div className="w-[90%] h-[90%] flex items-center justify-center bg-white bg-opacity-50 rounded-lg relative">
@@ -87,13 +89,13 @@ function Createtask() {
                 {/* Input for new note */}
                 <div className="flex items-center justify-between gap-2 h-10 ">
                   <img
-                    src={currentUser?.avatar || default_avatar}
+                    src={currentUser.avatar === null ? default_avatar : currentUser.avatar}
                     alt="User Avatar"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                   <input
                     type="text"
-                    className="w-4/6 p-2 rounded border-2 border-gray-300 outline-0 border-0"
+                    className="w-4/6 p-2 rounded border-gray-300 outline-0 border-0"
                     placeholder="Add a note..."
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
@@ -117,12 +119,12 @@ function Createtask() {
                       className="flex items-start gap-4 bg-gray-100 p-4 rounded-lg"
                     >
                       <img
-                        src={note.avatar}
+                        src={default_avatar}
                         alt={`${note.username}'s avatar`}
                         className="w-12 h-12 rounded-full object-cover"
                       />
                       <div className="flex flex-col">
-                        <p className="font-medium">{note.username}</p>
+                        <p className="font-medium">{note.userDetails.username}</p>
                         <p className="text-sm text-gray-700">{note.text}</p>
                       </div>
                     </div>

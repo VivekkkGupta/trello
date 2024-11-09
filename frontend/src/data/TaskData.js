@@ -1,3 +1,5 @@
+import { UserData, AdminData } from "./AuthData";
+
 const TaskData = [
   {
     id: 1,
@@ -7,10 +9,17 @@ const TaskData = [
     assignedTo: "Yash",
     notes: [
       {
-        username: "Admin",
+        userDetails: {
+          id: 1,
+          username: "Admin",
+          email: "admin@example.com",
+          password: "admin123",
+          avatar: null,
+          role: "admin",
+        },
+        noteId: 2,
         text: "Note added manually ",
-        avatar: "default",
-        timestamp: new Date(),
+        timestamp: "Sat Nov 09 2024 12:09:29 GMT+0530 (India Standard Time)",
       },
     ],
   },

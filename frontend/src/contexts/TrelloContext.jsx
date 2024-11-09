@@ -8,7 +8,7 @@ export const useTrelloContext = () => useContext(TrelloContext);
 
 export const TrelloProvider = ({ children }) => {
   // Initialize TaskData state from imported data
-  const [TaskData, setTaskData] = useState();
+  const [TaskDataState, setTaskDataState] = useState(TaskData);
 
   // Sidebar and color panel state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -44,13 +44,16 @@ export const TrelloProvider = ({ children }) => {
   };
 
   // Update TaskData by taskId and the updated task object
-  const updateTaskData = (taskId, updatedTask) => {
-    setTaskData(prevTaskData =>
+  const updateTaskDataState = (taskId, updatedTask) => {
+    setTaskDataState(prevTaskData =>
       prevTaskData.map(task =>
         task.id === taskId ? updatedTask : task
       )
     );
   };
+  useEffect(() => {
+    setCurrentTask()
+  }, [TaskDataState])
 
   const values = {
     isSidebarOpen,
@@ -64,8 +67,8 @@ export const TrelloProvider = ({ children }) => {
     currentTask,
     setCurrentTask,
     handleCurrentTaskInAdminDashboard,
-    updateTaskData,  // Adding the update function to context
-    TaskData,  // Exposing the TaskData state to the context consumers
+    updateTaskDataState,  // Adding the update function to context
+    TaskDataState,  // Exposing the TaskData state to the context consumers
   };
 
   return (
