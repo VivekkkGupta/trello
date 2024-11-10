@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function CreateTaskModal({ show, onClose, onSave }) {
-
     const { getAllUsersApiCall } = useAuthContext();
 
-    const [taskTitle, setTaskTitle] = useState('');
-    const [taskDescription, setTaskDescription] = useState('');
-    const [taskDueDate, setTaskDueDate] = useState('');
-    const [assignedTo, setAssignedTo] = useState('unassigned');
-    const [assignedToObj, setAssignedToObj] = useState({});
+    // Single object for task data
+    const [taskData, setTaskData] = useState({
+        title: '',
+        description: '',
+        dueDate: '',
+        assignedTo: 'unassigned',
+        assignedToObj: {}
+    });
+
     const [usersList, setUsersList] = useState([]);
+    const [errors, setErrors] = useState({});
 
     // Fetch users and update the list when modal opens
     const getDataAndSaveInOptions = async () => {
@@ -26,44 +30,49 @@ function CreateTaskModal({ show, onClose, onSave }) {
 
     // Update assignedToObj when assignedTo changes
     useEffect(() => {
-        const userObj = usersList.find(user => user._id === assignedTo);
-        setAssignedToObj(userObj || {});
-    }, [assignedTo, usersList]);
+        const userObj = usersList.find(user => user._id === taskData.assignedTo);
+        setTaskData(prevData => ({ ...prevData, assignedToObj: userObj || {} }));
+    }, [taskData.assignedTo, usersList]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setTaskData(prevData => ({ ...prevData, [name]: value }));
+        // Remove error for the field when it has value
+        if (value.trim()) {
+            setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
+        }
+    };
 
     const handleSave = () => {
-        if (!taskTitle.trim()) {
-            alert("Task title is required.");
-            return;
-        }
-        if (!taskDescription.trim()) {
-            alert("Task description is required.");
-            return;
-        }
-        if (!taskDueDate) {
-            alert("Due date is required.");
+        const { title, description, dueDate } = taskData;
+        const newErrors = {};
+
+        if (!title.trim()) newErrors.title = 'Task title is required.';
+        if (!description.trim()) newErrors.description = 'Task description is required.';
+        if (!dueDate) newErrors.dueDate = 'Due date is required.';
+
+        if (Object.keys(newErrors).length) {
+            setErrors(newErrors);
             return;
         }
 
-        onSave({
-            title: taskTitle,
-            description: taskDescription,
-            dueDate: taskDueDate,
-            assignedToObj,
-        });
-
+        onSave(taskData);
         clearModalStates();
     };
 
     const clearModalStates = () => {
-        setTaskTitle('');
-        setTaskDescription('');
-        setTaskDueDate('');
-        setAssignedTo('unassigned');
-        setAssignedToObj({});
+        setTaskData({
+            title: '',
+            description: '',
+            dueDate: '',
+            assignedTo: 'unassigned',
+            assignedToObj: {}
+        });
+        setErrors({});
     };
 
     const handleCancel = () => {
-        // clearModalStates();
+        clearModalStates();
         onClose();
     };
 
@@ -75,30 +84,37 @@ function CreateTaskModal({ show, onClose, onSave }) {
                 <h2 className="text-2xl mb-4">Create Task</h2>
                 <input
                     type="text"
+                    name="title"
                     placeholder="Task Title"
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)}
-                    className="w-full mb-3 p-2 border border-gray-300 rounded"
+                    value={taskData.title}
+                    onChange={handleChange}
+                    className="w-full mb-1 p-2 border border-gray-300 rounded"
                 />
+                {errors.title && <p className="text-red-500 text-sm mb-2">{errors.title}</p>}
                 <textarea
+                    name="description"
                     placeholder="Task Description"
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    className="w-full mb-3 p-2 border border-gray-300 rounded"
+                    value={taskData.description}
+                    onChange={handleChange}
+                    className="w-full mb-1 p-2 border border-gray-300 rounded"
                 />
+                {errors.description && <p className="text-red-500 text-sm mb-2">{errors.description}</p>}
                 <input
                     type="date"
-                    value={taskDueDate}
-                    onChange={(e) => setTaskDueDate(e.target.value)}
-                    className="w-full mb-4 p-2 border border-gray-300 rounded"
+                    name="dueDate"
+                    value={taskData.dueDate}
+                    onChange={handleChange}
+                    className="w-full mb-1 p-2 border border-gray-300 rounded"
                 />
+                {errors.dueDate && <p className="text-red-500 text-sm mb-2">{errors.dueDate}</p>}
                 <select
-                    value={assignedTo}
-                    onChange={(e) => setAssignedTo(e.target.value)}
+                    name="assignedTo"
+                    value={taskData.assignedTo}
+                    onChange={handleChange}
                     className="w-full mb-4 p-2 border border-gray-300 rounded"
                 >
                     <option value="unassigned">Unassigned</option>
-                    {usersList.map((user) => (
+                    {usersList.map(user => (
                         <option key={user._id} value={user._id}>
                             {user.username}
                         </option>
