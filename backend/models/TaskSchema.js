@@ -3,13 +3,16 @@ import { Schema, model } from "mongoose";
 const taskSchema = new Schema({
   title: { type: String, required: true },
   description: String,
+  dueDate: Date,
   state: String,
-  assignedTo: String,
+  assignedTo: {},
+  state: String,
   notes: [
     {
-      username: String,
+      userDetails: {},
       text: String,
       avatar: String,
+      type: String, // "Note" , "comment"
     },
   ],
 });

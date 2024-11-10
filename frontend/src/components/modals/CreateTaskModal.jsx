@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 
-function CreateTaskModal({ show, onClose, onSave }) {
-    const { getAllUsersApiCall } = useAuthContext();
+function CreateTaskModal({ show, onClose }) {
+    const { getAllUsersApiCall, createTaskFromApiCall } = useAuthContext();
 
     // Single object for task data
     const [taskData, setTaskData] = useState({
@@ -10,11 +10,13 @@ function CreateTaskModal({ show, onClose, onSave }) {
         description: '',
         dueDate: '',
         assignedTo: 'unassigned',
+        state: "Todos",
         assignedToObj: {}
     });
 
     const [usersList, setUsersList] = useState([]);
     const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState({ text: '', type: '' }); // State for the message box
 
     // Fetch users and update the list when modal opens
     const getDataAndSaveInOptions = async () => {
@@ -28,22 +30,24 @@ function CreateTaskModal({ show, onClose, onSave }) {
         getDataAndSaveInOptions();
     }, [show]);
 
-    // Update assignedToObj when assignedTo changes
-    useEffect(() => {
-        const userObj = usersList.find(user => user._id === taskData.assignedTo);
-        setTaskData(prevData => ({ ...prevData, assignedToObj: userObj || {} }));
-    }, [taskData.assignedTo, usersList]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTaskData(prevData => ({ ...prevData, [name]: value }));
-        // Remove error for the field when it has value
-        if (value.trim()) {
-            setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
-        }
-    };
 
-    const handleSave = () => {
+        if (name === 'assignedTo') {
+            if (value !== 'unassigned') {
+                const selectedUser = usersList.find(user => user._id === value);
+                setTaskData(prevData => ({ ...prevData, assignedToObj: selectedUser }));
+            }
+            else {
+                setTaskData(prevData => ({ ...prevData, assignedToObj: {} }));
+            }
+        }
+    }
+
+
+    const handleSave = async () => {
         const { title, description, dueDate } = taskData;
         const newErrors = {};
 
@@ -53,12 +57,21 @@ function CreateTaskModal({ show, onClose, onSave }) {
 
         if (Object.keys(newErrors).length) {
             setErrors(newErrors);
+            setMessage({ text: 'Please fill in all required fields.', type: 'error' });
             return;
         }
 
-        onSave(taskData);
-        clearModalStates();
+        try {
+            const resultText = await createTaskFromApiCall(taskData);
+            console.log(resultText)
+            setMessage({ text: `Task Created id: ${resultText._id}`, type: 'success' });
+            clearModalStates();
+        } catch (error) {
+            console.error("Error in handleSave:", error);
+            setMessage({ text: "Failed to create task", type: 'error' });
+        }
     };
+
 
     const clearModalStates = () => {
         setTaskData({
@@ -73,7 +86,12 @@ function CreateTaskModal({ show, onClose, onSave }) {
 
     const handleCancel = () => {
         clearModalStates();
+        setMessage({ text: '', type: '' }); // Clear message when modal is closed
         onClose();
+    };
+
+    const closeMessageBox = () => {
+        setMessage({ text: '', type: '' });
     };
 
     if (!show) return null;
@@ -82,6 +100,15 @@ function CreateTaskModal({ show, onClose, onSave }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md text-black">
                 <h2 className="text-2xl mb-4">Create Task</h2>
+
+                {/* Message Box */}
+                {message.text && (
+                    <div className={`flex items-center justify-between p-3 mb-4 rounded-md text-white ${message.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
+                        <span>{message.text}</span>
+                        <button onClick={closeMessageBox} className="text-xl font-bold ml-4">×</button>
+                    </div>
+                )}
+
                 <input
                     type="text"
                     name="title"

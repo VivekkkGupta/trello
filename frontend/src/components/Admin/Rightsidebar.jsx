@@ -1,57 +1,52 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTrelloContext } from '../../contexts/TrelloContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function Rightsidebar() {
-    const {
-        isRightSidebarOpen,
-        toggleRightSidebar,
-        handleCurrentTaskInAdminDashboard,
-    } = useTrelloContext();
-    const { UserData, TaskData, AdminData } = useAuthContext();
+    const { getAllUsersApiCall, getAllTasksApiCall, fetchUsersData, usersList, allTasks, setAllTasks } = useAuthContext();
+    const { isRightSidebarOpen, toggleRightSidebar, handleCurrentTaskInAdminDashboard, statusColors } = useTrelloContext();
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
     const [tempFilters, setTempFilters] = useState(['All']);
     const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
     const [tempStatusFilters, setTempStatusFilters] = useState([]);
+
     const [showDropdown, setShowDropdown] = useState(false);
+    const [filteredTasks, setFilteredTasks] = useState([]);
 
-    // Fetch tasks and filter them based on selected filters
-    const filteredTasks = UserData.flatMap(user =>
-        user.tasksAssigned.map(taskId => {
-            const task = TaskData.find(t => t.id === taskId);
-            if (!task) return null;
-
-            const statusMatch = tempStatusFilters.length === 0 || tempStatusFilters.includes(task.state.toLowerCase());
-            const userMatch = tempFilters.includes('All') || tempFilters.includes(user.username);
-
-            return statusMatch && userMatch ? task : null;
-        }).filter(task => task !== null)
-    );
-
-    const handleTempFilterChange = (user) => {
-        if (user === 'All') {
-            setTempFilters(['All']);
-        } else {
-            setTempFilters(prevFilters => {
-                const updatedFilters = prevFilters.includes('All')
-                    ? [user]
-                    : prevFilters.includes(user)
-                        ? prevFilters.filter(filter => filter !== user)
-                        : [...prevFilters, user];
-
-                return updatedFilters.length === 0 ? ['All'] : updatedFilters;
-            });
+    const fetchTasksData = async () => {
+        try {
+            const tasks = await getAllTasksApiCall();
+            setAllTasks(tasks);
+            setFilteredTasks(tasks); // Initialize with all tasks
+        } catch (error) {
+            console.error("Error fetching tasks:", error);
         }
     };
 
-    const handleTempStatusFilterChange = (status) => {
-        setTempStatusFilters(prevFilters => {
-            const updatedFilters = prevFilters.includes(status)
-                ? prevFilters.filter(filter => filter !== status)
-                : [...prevFilters, status];
-            return updatedFilters;
+    useEffect(() => {
+        fetchUsersData();
+        fetchTasksData();
+    }, []);
+
+    const handleTempFilterChange = (user) => {
+        setTempFilters(prevFilters => {
+            if (user === 'All') return ['All'];
+            const updatedFilters = prevFilters.includes('All')
+                ? [user]
+                : prevFilters.includes(user)
+                    ? prevFilters.filter(filter => filter !== user)
+                    : [...prevFilters, user];
+            return updatedFilters.length === 0 ? ['All'] : updatedFilters;
         });
+    };
+
+    const handleTempStatusFilterChange = (status) => {
+        setTempStatusFilters(prevFilters =>
+            prevFilters.includes(status)
+                ? prevFilters.filter(filter => filter !== status)
+                : [...prevFilters, status]
+        );
     };
 
     const applyFilters = () => {
@@ -60,15 +55,18 @@ function Rightsidebar() {
         setShowDropdown(false);
     };
 
-    // Define colors for different statuses
-    const statusColors = {
-        'done': 'border-green-500',
-        'progress': 'border-yellow-500',
-        'todos': 'border-blue-500',
-        'failed': 'border-red-500',
-    };
+    // Filter tasks whenever selectedFilters, selectedStatusFilters, or allTasks change
+    useEffect(() => {
+        const filtered = allTasks.filter(task => {
+            const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(task.state.toLowerCase());
+            const userMatch = selectedFilters.includes('All') || selectedFilters.includes(task.assignedTo.username);
+            return statusMatch && userMatch;
+        });
+        setFilteredTasks(filtered);
+    }, [selectedFilters, selectedStatusFilters, allTasks]);
 
-    // Calculate the number of filtered tasks
+
+
     const taskCount = filteredTasks.length;
 
     return (
@@ -108,8 +106,8 @@ function Rightsidebar() {
                                         />
                                         All
                                     </label>
-                                    {UserData.map(user => (
-                                        <label key={user.id} className="flex items-center">
+                                    {usersList.map(user => (
+                                        <label key={user._id} className="flex items-center">
                                             <input
                                                 type="checkbox"
                                                 checked={tempFilters.includes(user.username)}
@@ -129,7 +127,7 @@ function Rightsidebar() {
                                                 onChange={() => handleTempStatusFilterChange(status)}
                                                 className="mr-2"
                                             />
-                                            {status.charAt(0).toUpperCase() + status.slice(1)} {/* Capitalize status */}
+                                            {status.charAt(0).toUpperCase() + status.slice(1)}
                                         </label>
                                     ))}
 
@@ -145,16 +143,21 @@ function Rightsidebar() {
 
                         {/* Task List with Scrollbar */}
                         <div className="task-list h-full custom-scrollbar overflow-y-auto pr-2 text-gray-600">
-                            {filteredTasks.map((task) => (
-                                <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task.id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state.toLowerCase()]}`}>
-                                    <div className='text-sm'># {task.id}</div>
-                                    <h3 className="text-gray-800 font-semibold">{task.title}</h3>
-                                    <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                                    <p className={`text-sm font-medium text-gray-900 px-0 py-1 rounded-lg`}>
-                                        Status: {task.state}
-                                    </p>
+                            {filteredTasks.length === 0 ?
+                                <div className='cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white'>
+                                    No Data
                                 </div>
-                            ))}
+                                :
+                                filteredTasks.map((task) => (
+                                    <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task._id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state].border || "Todos"}`}>
+                                        <div className='text-sm'># {task._id}</div>
+                                        <h3 className="text-gray-800 font-semibold text-lg">{task.title}</h3>
+                                        <p className="text-sm text-gray-600  mb-2">Description: {task.description}</p>
+                                        <p className="text-sm font-medium text-gray-900 rounded-lg">Assigned To: {task.assignedTo.username}
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-900 py-1 rounded-lg">Status: {task.state || "No Data"}</p>
+                                    </div>
+                                ))}
                         </div>
                     </div>
                 )}

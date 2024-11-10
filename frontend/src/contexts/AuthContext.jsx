@@ -144,7 +144,6 @@ export const AuthProvider = ({ children }) => {
 
   // Login Page
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
-
   const setLocalAuthData = (data) => {
     localStorage.setItem("LocalAuthData", JSON.stringify(data));
   };
@@ -189,6 +188,64 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const createTaskFromApiCall = async (task) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/taskapi/createtask`, {
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate,
+        state: task.state,
+        assignedTo: task.assignedToObj,
+        notes: task.notes,
+      });
+      const resultTaskData = response.data
+      const resultTask = resultTaskData.TaskDetails
+      return resultTask;
+    } catch (error) {
+      return `Error creating task: ${error.response?.data?.message || error.message}`;
+    }
+  };
+
+
+  const getAllTasksApiCall = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/taskapi/getalltasks`);
+      const tasks = response.data;
+      return tasks
+    } catch (error) {
+      return `Error creating task: ${error.response?.data?.message || error.message}`;
+    }
+  }
+
+
+  const editTaskFromApiCall = async (newUserObj) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/taskapi/edittask/${newUserObj._id}`, newUserObj);
+      const resultTaskData = response.data
+      const resultTask = resultTaskData.TaskDetails
+      return resultTask;
+    } catch (error) {
+      return `Error creating task: ${error.response?.data?.message || error.message}`;
+    }
+  };
+
+
+  const [usersList, setUsersList] = useState([]);
+  const fetchUsersData = async () => {
+    const response = await getAllUsersApiCall();
+    setUsersList(response.length > 0 ? response : []);
+  };
+
+  // Inside AuthContext.js
+  const [allTasks, setAllTasks] = useState([]);
+
+  const updateTask = (updatedTask) => {
+    setAllTasks(prevTasks =>
+      prevTasks.map(task => task._id === updatedTask._id ? updatedTask : task)
+    );
+  };
+
+
 
   const values = {
     AdminData,
@@ -209,8 +266,14 @@ export const AuthProvider = ({ children }) => {
     handleLogout,
     showProfileDropDown,
     setShowProfileDropDown,
-    getAllUsersApiCall
+    getAllUsersApiCall,
+    createTaskFromApiCall,
+    getAllTasksApiCall,
+    usersList, fetchUsersData,
+    editTaskFromApiCall,
+    allTasks, setAllTasks, updateTask
+
   };
 
-  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={values} > {children}</AuthContext.Provider >;
 };

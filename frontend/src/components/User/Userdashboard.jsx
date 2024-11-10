@@ -1,4 +1,3 @@
-// UserDashboard.jsx
 import React, { useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../Sidebar/Sidebar';

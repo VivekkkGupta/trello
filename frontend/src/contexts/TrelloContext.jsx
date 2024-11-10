@@ -44,13 +44,35 @@ export const TrelloProvider = ({ children }) => {
   };
 
   // Update TaskData by taskId and the updated task object
-  const updateTaskDataState = (taskId, updatedTask) => {
-    setTaskDataState(prevTaskData =>
-      prevTaskData.map(task =>
-        task.id === taskId ? updatedTask : task
-      )
-    );
+  // const updateTaskDataState = (taskId, updatedTask) => {
+  //   setTaskDataState(prevTaskData =>
+  //     prevTaskData.map(task =>
+  //       task.id === taskId ? updatedTask : task
+  //     )
+  //   );
+  // };
+
+  // Define colors for different statuses
+  const statusColors = {
+    'Completed': {
+      border: 'border-green-500',
+      bg: 'bg-green-300',
+    },
+    'InProgress': {
+      border: 'border-yellow-500',
+      bg: 'bg-yellow-300',
+    },
+    'Todos': {
+      border: 'border-blue-500',
+      bg: 'bg-blue-300',
+    },
+    'Failed': {
+      border: 'border-red-500',
+      bg: 'bg-red-300',
+    },
   };
+
+
   useEffect(() => {
     setCurrentTask()
   }, [TaskDataState])
@@ -67,8 +89,9 @@ export const TrelloProvider = ({ children }) => {
     currentTask,
     setCurrentTask,
     handleCurrentTaskInAdminDashboard,
-    updateTaskDataState,  // Adding the update function to context
+    // updateTaskDataState,  // Adding the update function to context
     TaskDataState,  // Exposing the TaskData state to the context consumers
+    statusColors
   };
 
   return (

@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useState } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 import CreateTaskModal from '../Modals/CreateTaskModal';
@@ -7,10 +6,9 @@ function Navbar() {
     const { handleLogout, showProfileDropDown, setShowProfileDropDown } = useAuthContext();
     const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const handleSaveTask = (task) => {
-        // Logic to save the task or send it to backend
-        console.log("New Task Created:", task);
-        setShowCreateModal(false); // Close the modal after saving
+
+    const handleCancel = () => {
+        setShowCreateModal(false);
     };
 
     return (
@@ -54,8 +52,7 @@ function Navbar() {
             {/* Create Task Modal */}
             <CreateTaskModal
                 show={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSave={handleSaveTask}
+                onClose={handleCancel}
             />
         </div>
     );
