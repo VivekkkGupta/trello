@@ -1,9 +1,17 @@
+// Navbar.js
 import React, { useState } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
+import CreateTaskModal from '../Modals/CreateTaskModal';
 
 function Navbar() {
+    const { handleLogout, showProfileDropDown, setShowProfileDropDown } = useAuthContext();
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const { handleLogout, showProfileDropDown, setShowProfileDropDown } = useAuthContext()
+    const handleSaveTask = (task) => {
+        // Logic to save the task or send it to backend
+        console.log("New Task Created:", task);
+        setShowCreateModal(false); // Close the modal after saving
+    };
 
     return (
         <div className='h-[3rem] bg-opacity-60 bg-black border-b-[1px] border-opacity-40 border-gray-100'>
@@ -17,10 +25,11 @@ function Navbar() {
                         <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
                             Starred <i className="ri-arrow-drop-down-line"></i>
                         </div>
-                        <div className='px-3 py-1 cursor-pointer rounded-sm bg-white bg-opacity-40 font-[300]'>
-                            <button>
-                                Create
-                            </button>
+                        <div
+                            className='px-3 py-1 cursor-pointer rounded-sm bg-white bg-opacity-40 font-[300]'
+                            onClick={() => setShowCreateModal(true)}
+                        >
+                            Create
                         </div>
                     </div>
                 </div>
@@ -42,6 +51,12 @@ function Navbar() {
                     </div>
                 </div>
             </div>
+            {/* Create Task Modal */}
+            <CreateTaskModal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSave={handleSaveTask}
+            />
         </div>
     );
 }

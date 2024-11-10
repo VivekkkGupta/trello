@@ -1,7 +1,9 @@
-// AuthProvider.js
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { AdminData, UserData } from "../data/AuthData";
 import TaskData from "../data/TaskData";
+import axios from "axios";
+
+const BASE_URL = "http://127.0.0.1:5555"
 
 export const AuthContext = createContext(null);
 
@@ -12,22 +14,28 @@ export const AuthProvider = ({ children }) => {
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
 
   // Login Page UseStates
-  const [signupClicked, setSignupClicked] = useState(false);
+  const [loginOrSignUpPage, setLoginOrSignUpPage] = useState(false);
 
-  const handleSignupButton = () => {
-    setSignupClicked(!signupClicked);
+  // Toggle Between Signup and Login Page
+  const handleLoginOrSignUpPage = () => {
+    setLoginOrSignUpPage(!loginOrSignUpPage);
   };
 
+  // User Input data in an object
   const [userInputData, setUserInputData] = useState({
+    username: "",
     email: "",
     password: "",
   });
 
+  // User Input Errors that will be manually set
   const [userInputErrors, setUserInputErrors] = useState({
+    username: "",
     email: "",
     password: "",
   });
 
+  // Handle all the inputboxes of user input
   const handleInputBox = (e) => {
     setUserInputData({
       ...userInputData,
@@ -40,44 +48,91 @@ export const AuthProvider = ({ children }) => {
     return regex.test(email);
   }
 
-  const handleLoginButton = () => {
+  // Function to check and set errors
+  function checkAndSetErrors(inputData) {
     const errors = {};
 
-    if (userInputData.email === "") {
+    if (inputData.email === "") {
       errors.email = "Email is Required";
-    }
-
-    if (userInputData.email !== "" && !isValidEmail(userInputData.email)) {
+    } else if (!isValidEmail(inputData.email)) {
       errors.email = "Email is not valid";
     }
 
-    if (userInputData.password === "") {
+    if (inputData.password === "") {
       errors.password = "Password is Required";
     }
 
-    setUserInputErrors(errors);
+    return errors;
+  }
+
+  // Handle Signup and call create User from backend
+  const handleSignUpClick = async () => {
+    const errors = checkAndSetErrors(userInputData);
 
     if (Object.keys(errors).length === 0) {
-      // Login logic here
-      const user = UserData.find((user) => user.email === userInputData.email);
-      const admin = AdminData.find(
-        (user) => user.email === userInputData.email
-      );
-
-      if (admin && admin.password === userInputData.password) {
-        setLocalAuthData(admin);
-        getCurrentUserFromLocalStorageAndSave();
-        setUserInputData({ email: "", password: "" });
-      } else if (user && user.password === userInputData.password) {
-        setLocalAuthData(user);
-        getCurrentUserFromLocalStorageAndSave();
-        setUserInputData({ email: "", password: "" });
-      } else {
-        setUserInputErrors({
-          ...userInputErrors,
-          password: "Invalid credentials",
-        });
+      try {
+        const res = await axios.post(`${BASE_URL}/userapi/createuser`, userInputData);
+        // Handle response and error cases
+        if (res.data.error) {
+          alert(res.data.error); // Display the error message from the response
+        } else {
+          alert("User Created Successfully");
+          setUserInputData({ username: "", email: "", password: "" });
+          setUserInputErrors({ username: "", email: "", password: "" });
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          // Handle the specific case of email already being used
+          alert("This email ID is already registered. Please use a different email.");
+        } else {
+          console.error("Error creating user:", error);
+          alert("An unexpected error occurred. Please try again.");
+        }
       }
+    } else {
+      setUserInputErrors(errors);
+    }
+  };
+
+  // Handle Login Click by checking the user in database from backend
+  const handleLoginButton = async () => {
+
+    const errors = checkAndSetErrors(userInputData);
+
+    if (Object.keys(errors).length === 0) {
+      try {
+        // Make an API call to the backend to check the credentials
+        const response = await axios.post(`${BASE_URL}/userapi/login`, userInputData);
+
+        if (response.data.message === "Login successful") {
+          // Set the user data to local storage
+          setLocalAuthData(response.data.user);
+          getCurrentUserFromLocalStorageAndSave();
+          setUserInputData({ email: "", password: "" });
+          setUserInputErrors({ email: "", password: "" });
+        } else {
+          setUserInputErrors({
+            ...userInputErrors,
+            password: response.data.error, // Show the error message from the backend
+          });
+        }
+      } catch (error) {
+        if (error.response.status === 401) {
+          setUserInputErrors({
+            ...userInputErrors,
+            password: "Invalid Credentials",
+          });
+        }
+        else {
+          setUserInputErrors({
+            ...userInputErrors,
+            password: "An error occurred. Please try again.",
+          });
+        }
+        console.error("Error logging in:", error);
+      }
+    } else {
+      setUserInputErrors(errors);
     }
   };
 
@@ -111,13 +166,38 @@ export const AuthProvider = ({ children }) => {
     getCurrentUserFromLocalStorageAndSave();
   }, []);
 
+  // Reset user input data and errors after clicking on signup or login page
+  useEffect(() => {
+    setUserInputData({
+      email: "",
+      password: "",
+    });
+    setUserInputErrors({
+      email: "",
+      password: "",
+    });
+  }, [loginOrSignUpPage]);
+
+
+  const getAllUsersApiCall = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/userapi/getusers`);
+      return response.data; // Return fetched users directly
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return []; // Return an empty array if there's an error
+    }
+  };
+
+
   const values = {
     AdminData,
     UserData,
-    TaskData,  // Pass TaskData to the context value
-    signupClicked,
-    setSignupClicked,
-    handleSignupButton,
+    TaskData,
+    loginOrSignUpPage,
+    setLoginOrSignUpPage,
+    handleLoginOrSignUpPage,
+    handleSignUpClick,
     handleLoginButton,
     userInputData,
     setUserInputData,
@@ -129,6 +209,7 @@ export const AuthProvider = ({ children }) => {
     handleLogout,
     showProfileDropDown,
     setShowProfileDropDown,
+    getAllUsersApiCall
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

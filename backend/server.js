@@ -5,8 +5,7 @@ import connectDB from "./config/db.js";
 import { json } from "express";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
-// import taskRoutes from "./routes/taskRoutes.js";
+import cors from "cors";
 
 const app = express();
 
@@ -16,10 +15,12 @@ app.use(json());
 // Database connection
 connectDB();
 
+app.use(cors());
+
 // Routes
-app.use("/", (req, res) => {
-  res.status(200).send({ Data: "Welcome to Our Backend" });
-});
+// app.use("/", (req, res) => {
+//   res.status(200).send({ Data: "Welcome to Our Backend" });
+// });
 app.use("/userapi", userRoutes);
 app.use("/api", taskRoutes);
 

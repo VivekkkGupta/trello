@@ -5,7 +5,7 @@ import { useAuthContext } from '../../contexts/AuthContext'
 
 function Loginpage() {
 
-    const { signupClicked } = useAuthContext()
+    const { loginOrSignUpPage } = useAuthContext()
 
     return (
         <div className='w-full h-full bg-gray-400 flex items-center justify-center'>
@@ -20,7 +20,7 @@ function Loginpage() {
                 </div>
                 <div className='rounded-md bg-white bg-opacity-60 w-full h-full shadow-lg flex items-center justify-center flex-col gap-2'>
                     {
-                        signupClicked === true ? <Signupform /> : <Loginform />
+                        loginOrSignUpPage === true ? <Signupform /> : <Loginform />
                     }
                 </div>
             </div>

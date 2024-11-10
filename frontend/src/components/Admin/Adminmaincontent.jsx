@@ -1,10 +1,10 @@
 import React from 'react'
-import Createtask from './Createtask'
+import ShowTask from './ShowTask'
 
 function Adminmaincontent() {
   return (
     <div className='w-full h-full'>
-      <Createtask/>
+      <ShowTask />
     </div>
   )
 }

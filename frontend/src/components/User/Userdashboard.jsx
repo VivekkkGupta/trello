@@ -13,7 +13,7 @@ function UserDashboard() {
             <Navbar />
             <div className="flex h-[calc(100%-3rem)] overflow-hidden">
                 <Sidebar className="h-full" />
-                <Maincontent className="h-full overflow-y-scroll" />
+                {/* <Maincontent className="h-full overflow-y-scroll" /> */}
             </div>
         </div>
     );

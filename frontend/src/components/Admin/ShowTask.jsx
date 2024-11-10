@@ -3,7 +3,7 @@ import { useTrelloContext } from "../../contexts/TrelloContext";
 import { useAuthContext } from "../../contexts/AuthContext"; // Import the AuthContext to access user data
 import default_avatar from "../../assets/images/default_avatar.jpg";
 
-function Createtask() {
+function ShowTask() {
   const [newNote, setNewNote] = useState(""); // State to handle new note input
 
   const {
@@ -163,4 +163,4 @@ function Createtask() {
   );
 }
 
-export default Createtask;
+export default ShowTask;

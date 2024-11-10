@@ -2,9 +2,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 
 const LoginForm = () => {
   const {
-    signupClicked,
-    setSignupClicked,
-    handleSignupButton,
+    handleLoginOrSignUpPage,
     userInputData,
     setUserInputData,
     userInputErrors,
@@ -50,7 +48,7 @@ const LoginForm = () => {
 
       <div className="w-[50%] h-12 flex flex-col md:flex-row justify-around items-center gap-5 mt-5">
         <button
-          onClick={handleSignupButton}
+          onClick={handleLoginOrSignUpPage}
           className="w-full bg-slate-400 py-2 px-3 rounded-md font-[500] hover:bg-slate-500 duration-200 transition-all"
         >
           Register
