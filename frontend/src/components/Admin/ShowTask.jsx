@@ -3,61 +3,28 @@ import { useTrelloContext } from "../../contexts/TrelloContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import default_avatar from "../../assets/images/default_avatar.jpg";
 import ShowTaskRightPanel from "./ShowTaskRightPanel";
+import ShowNotesInShowTask from "./ShowNotesInShowTask";
 
 function ShowTask() {
-  const [newNote, setNewNote] = useState("");
-  const [newComment, setNewComment] = useState("");
-
+  const { isRightSidebarOpen, statusColors } = useTrelloContext();
   const {
-    isRightSidebarOpen,
-    handleCurrentTaskInAdminDashboard,
+    usersList,
+    currentUser,
     currentTask,
     setCurrentTask,
-    statusColors,
-  } = useTrelloContext();
-
-  const { usersList, currentUser, editTaskFromApiCall, updateTask, formatTimestamp } = useAuthContext();
-
-  const addNote = (text, isComment = false) => {
-    const updatedTask = {
-      ...currentTask,
-      notes: [
-        ...currentTask.notes,
-        {
-          userDetails: currentUser,
-          noteId: Date.now(), // Unique note ID
-          text,
-          timestamp: new Date(),
-          isComment, // Flag to distinguish between notes and comments
-        },
-      ],
-    };
-    return updatedTask;
-  };
-
-
-
-  const handleAddNote = () => {
-    if (newNote.trim()) {
-      const updatedTask = addNote(newNote.trim());
-      setCurrentTask(updatedTask);
-      setNewNote("");
-    }
-  };
-
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const updatedTask = addNote(newComment.trim(), true);
-      setCurrentTask(updatedTask);
-      setNewComment("");
-    }
-  };
+    newComment,
+    setNewComment,
+    editTaskFromApiCall,
+    updateTask,
+    formatTimestamp,
+    handleAddComment,
+  } = useAuthContext();
 
   return (
     <div className={`${isRightSidebarOpen ? "w-[calc(100%-20rem)]" : "w-full"} h-full flex items-center justify-center duration-200 transition-all`}>
       {currentTask && (
-        <div className="w-[90%] h-[90%] flex items-center justify-center bg-white bg-opacity-50 rounded-lg relative">
-          <span onClick={() => handleCurrentTaskInAdminDashboard(null)} className="absolute right-4 top-4 cursor-pointer">
+        <div className="w-[95%] h-[95%] flex items-center justify-center bg-white bg-opacity-50 rounded-lg relative">
+          <span onClick={() => setCurrentTask(null)} className="absolute right-4 top-4 cursor-pointer">
             <i className="ri-close-line text-3xl"></i>
           </span>
 
@@ -85,25 +52,7 @@ function ShowTask() {
                 </div>
               </div>
 
-              <div className="mt-4 bg-gray-200 rounded-lg p-4 h-full custom-scrollbar overflow-y-auto">
-                <h3 className="font-semibold text-xl mb-4">Notes & Comments</h3>
-                <div className="space-y-4">
-                  {currentTask.notes?.map((note) => (
-                    <div
-                      key={note.noteId}
-                      className={`flex items-start gap-4 p-4 rounded-lg ${note.isComment ? "bg-blue-50 text-blue-800" : "bg-green-50 text-green-800"
-                        }`}
-                    >
-                      <img src={default_avatar} alt={`${note.userDetails.username}'s avatar`} className="w-12 h-12 rounded-full object-cover" />
-                      <div className="flex flex-col">
-                        <p className="font-medium">{note.userDetails.username} {note.isComment ? "(Comment)" : "(Note)"}</p>
-                        <p className="text-sm">{note.text}</p>
-                        <p className="text-xs mt-1 text-gray-500">{formatTimestamp(note.timestamp)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ShowNotesInShowTask />
 
             </div>
 

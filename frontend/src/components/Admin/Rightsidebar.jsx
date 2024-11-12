@@ -4,10 +4,10 @@ import { useAuthContext } from '../../contexts/AuthContext';
 
 function Rightsidebar() {
     const { fetchUsersData, fetchTasksData,
-        usersList = [], allTasks = [], filteredTasks = [], setFilteredTasks, formatTimestamp
+        usersList = [], allTasks = [], filteredTasks = [], setFilteredTasks, formatTimestamp, handleCurrentTaskInAdminDashboard
     } = useAuthContext();
 
-    const { isRightSidebarOpen, toggleRightSidebar, handleCurrentTaskInAdminDashboard, statusColors = {} } = useTrelloContext();
+    const { isRightSidebarOpen, toggleRightSidebar, statusColors = {} } = useTrelloContext();
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
     const [tempFilters, setTempFilters] = useState(['All']);

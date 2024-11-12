@@ -1,12 +1,15 @@
-import React from 'react'
-import ShowTask from './ShowTask'
+// Adminmaincontent.js
+import React from 'react';
+import ShowTask from './ShowTask';
+import TaskStatsChart from './TaskStatsChart';
 
 function Adminmaincontent() {
   return (
-    <div className='w-full h-full'>
-      <ShowTask />
+    <div className="relative w-full h-full">
+      <ShowTask className="relative z-10" />
+      <TaskStatsChart />
     </div>
-  )
+  );
 }
 
-export default Adminmaincontent
+export default Adminmaincontent;

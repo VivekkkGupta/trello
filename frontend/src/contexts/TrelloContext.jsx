@@ -58,7 +58,6 @@ export const TrelloProvider = ({ children }) => {
     },
   };
 
-
   const values = {
     isSidebarOpen,
     toggleSidebar,

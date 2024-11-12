@@ -9,27 +9,38 @@ export const AuthContext = createContext(null);
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // Authentication state
+
+  // Local storage handling
+  const getLocalAuthData = () => JSON.parse(localStorage.getItem("LocalAuthData")) || null;
+  const setLocalAuthData = (data) => localStorage.setItem("LocalAuthData", JSON.stringify(data));
+
+  // Authentication state and functions
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
   const [loginOrSignUpPage, setLoginOrSignUpPage] = useState(false);
   const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "" });
   const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "" });
 
-  // Admin dashboard task management
+  // Admin dashboard task management state
   const [currentTask, setCurrentTask] = useState(null);
   const [usersList, setUsersList] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
-  // Helper functions
-  const getLocalAuthData = () => JSON.parse(localStorage.getItem("LocalAuthData")) || null;
-  const setLocalAuthData = (data) => localStorage.setItem("LocalAuthData", JSON.stringify(data));
-  const formatTimestamp = (timestamp) => new Date(timestamp).toLocaleString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
-  });
+  // Timestamp formatting
+  const formatTimestamp = (timestamp) =>
+    new Date(timestamp).toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
 
-  // Validation functions
+  // Validation
   const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
   const checkAndSetErrors = (inputData) => {
     const errors = {};
@@ -39,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     return errors;
   };
 
-  // Input handling
+  // Input handlers
   const handleInputBox = (e) => setUserInputData({ ...userInputData, [e.target.name]: e.target.value });
   const handleLoginOrSignUpPage = () => setLoginOrSignUpPage((prev) => !prev);
 
@@ -57,8 +68,11 @@ export const AuthProvider = ({ children }) => {
         setUserInputErrors({ username: "", email: "", password: "" });
       }
     } catch (error) {
-      alert(error.response?.status === 409 ? "This email ID is already registered. Please use a different email." : "An unexpected error occurred. Please try again.");
-      console.error("Error creating user:", error);
+      alert(
+        error.response?.status === 409
+          ? "This email ID is already registered. Please use a different email."
+          : "An unexpected error occurred. Please try again."
+      );
     }
   };
 
@@ -76,8 +90,10 @@ export const AuthProvider = ({ children }) => {
         setUserInputErrors({ ...userInputErrors, password: response.data.error });
       }
     } catch (error) {
-      setUserInputErrors({ ...userInputErrors, password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again." });
-      console.error("Error logging in:", error);
+      setUserInputErrors({
+        ...userInputErrors,
+        password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again.",
+      });
     }
   };
 
@@ -101,7 +117,8 @@ export const AuthProvider = ({ children }) => {
   const createTaskFromApiCall = async (task) => {
     try {
       const response = await axios.post(`${BASE_URL}/taskapi/createtask`, {
-        ...task, assignedTo: task.assignedToObj,
+        ...task,
+        assignedTo: task.assignedToObj,
       });
       return response.data.TaskDetails;
     } catch (error) {
@@ -120,9 +137,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const editTaskFromApiCall = async (newUserObj) => {
+  const editTaskFromApiCall = async (newTaskObj) => {
     try {
-      const response = await axios.put(`${BASE_URL}/taskapi/edittask/${newUserObj._id}`, newUserObj);
+      const response = await axios.put(`${BASE_URL}/taskapi/edittask/${newTaskObj._id}`, newTaskObj);
       return response.data.TaskDetails;
     } catch (error) {
       console.error("Error editing task:", error);
@@ -131,7 +148,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Task functions
-  const updateTask = (updatedTask) => setAllTasks((prevTasks) => prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task)));
+  const updateTask = (updatedTask) =>
+    setAllTasks((prevTasks) => prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task)));
+
+
+  const handleCurrentTaskInAdminDashboard = (task) => {
+    setCurrentTask(task);
+  };
 
   const handleUserChange = async (e) => {
     const newAssignedUserId = e.target.value;
@@ -142,13 +165,16 @@ export const AuthProvider = ({ children }) => {
       const resultTask = await editTaskFromApiCall({
         ...currentTask,
         assignedTo: newAssignedUserObj,
-        notes: [...currentTask.notes, {
-          userDetails: currentUser,
-          noteId: Date.now(),
-          text: `Task reassigned to ${newAssignedUserObj.username} by ${currentUser.username}`,
-          timestamp: new Date(),
-          isComment: false,
-        }],
+        notes: [
+          ...currentTask.notes,
+          {
+            userDetails: currentUser,
+            noteId: Date.now(),
+            text: `Task reassigned to ${newAssignedUserObj.username} by ${currentUser.username}`,
+            timestamp: new Date(),
+            isComment: false,
+          },
+        ],
       });
       setCurrentTask(resultTask);
       updateTask(resultTask);
@@ -163,18 +189,47 @@ export const AuthProvider = ({ children }) => {
       const resultTask = await editTaskFromApiCall({
         ...currentTask,
         state: newState,
-        notes: [...currentTask.notes, {
-          userDetails: currentUser,
-          noteId: Date.now(),
-          text: `Task status changed to ${newState} by ${currentUser.username}`,
-          timestamp: new Date(),
-          isComment: false,
-        }],
+        notes: [
+          ...currentTask.notes,
+          {
+            userDetails: currentUser,
+            noteId: Date.now(),
+            text: `Task status changed to ${newState} by ${currentUser.username}`,
+            timestamp: new Date(),
+            isComment: false,
+          },
+        ],
       });
       setCurrentTask(resultTask);
       updateTask(resultTask);
     } catch (error) {
       console.error("Error updating task state:", error);
+    }
+  };
+
+  const addNote = (text, isComment = false) => {
+    const updatedTask = {
+      ...currentTask,
+      notes: [
+        ...currentTask.notes,
+        {
+          userDetails: currentUser,
+          noteId: Date.now(), // Unique note ID
+          text,
+          timestamp: new Date(),
+          isComment, // Flag to distinguish between notes and comments
+        },
+      ],
+    };
+    return updatedTask;
+  };
+
+  const handleAddComment = async () => {
+    if (newComment.trim()) {
+      const updatedTask = addNote(newComment.trim(), true);
+      await editTaskFromApiCall(updatedTask)
+      setCurrentTask(updatedTask);
+      setNewComment("");
     }
   };
 
@@ -196,9 +251,39 @@ export const AuthProvider = ({ children }) => {
   };
 
   const values = {
-    AdminData, UserData, TaskData, currentUser, showProfileDropDown, loginOrSignUpPage, userInputData, userInputErrors, usersList, allTasks, filteredTasks,
-    handleLoginOrSignUpPage, handleSignUpClick, handleLoginButton, handleLogout, handleInputBox, formatTimestamp,
-    fetchUsersData, fetchTasksData, createTaskFromApiCall, editTaskFromApiCall, updateTask, handleUserChange, handleStateChange, setCurrentTask,
+    AdminData,
+    UserData,
+    TaskData,
+    currentUser,
+    showProfileDropDown,
+    loginOrSignUpPage,
+    userInputData,
+    userInputErrors,
+    usersList,
+    allTasks,
+    filteredTasks,
+    currentTask,
+    newComment,
+    setNewComment,
+    setFilteredTasks,
+    handleLoginOrSignUpPage,
+    handleSignUpClick,
+    handleLoginButton,
+    handleLogout,
+    handleInputBox,
+    formatTimestamp,
+    fetchUsersData,
+    fetchTasksData,
+    createTaskFromApiCall,
+    editTaskFromApiCall,
+    updateTask,
+    handleUserChange,
+    handleStateChange,
+    setCurrentTask,
+    handleAddComment,
+    addNote,
+    getAllUsersApiCall,
+    handleCurrentTaskInAdminDashboard
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
