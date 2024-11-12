@@ -37,20 +37,6 @@ export const TrelloProvider = ({ children }) => {
     localStorage.setItem("bgcolorofdashboard", selectedColor);
   }, [selectedColor]);
 
-  // Admin dashboard task management
-  const [currentTask, setCurrentTask] = useState(null);
-  const handleCurrentTaskInAdminDashboard = (task) => {
-    setCurrentTask(task);
-  };
-
-  // Update TaskData by taskId and the updated task object
-  // const updateTaskDataState = (taskId, updatedTask) => {
-  //   setTaskDataState(prevTaskData =>
-  //     prevTaskData.map(task =>
-  //       task.id === taskId ? updatedTask : task
-  //     )
-  //   );
-  // };
 
   // Define colors for different statuses
   const statusColors = {
@@ -73,10 +59,6 @@ export const TrelloProvider = ({ children }) => {
   };
 
 
-  useEffect(() => {
-    setCurrentTask()
-  }, [TaskDataState])
-
   const values = {
     isSidebarOpen,
     toggleSidebar,
@@ -86,11 +68,6 @@ export const TrelloProvider = ({ children }) => {
     setSelectedColor,
     isRightSidebarOpen,
     toggleRightSidebar,
-    currentTask,
-    setCurrentTask,
-    handleCurrentTaskInAdminDashboard,
-    // updateTaskDataState,  // Adding the update function to context
-    TaskDataState,  // Exposing the TaskData state to the context consumers
     statusColors
   };
 

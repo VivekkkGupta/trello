@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTrelloContext } from "../../contexts/TrelloContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import default_avatar from "../../assets/images/default_avatar.jpg";
+import ShowTaskRightPanel from "./ShowTaskRightPanel";
 
 function ShowTask() {
   const [newNote, setNewNote] = useState("");
@@ -34,58 +35,7 @@ function ShowTask() {
     return updatedTask;
   };
 
-  const handleUserChange = async (e) => {
-    const newAssignedUserId = e.target.value;
-    const newAssignedUserObj = usersList.find((user) => user._id === newAssignedUserId);
 
-    if (!newAssignedUserObj) return;
-
-    try {
-      const resultTask = await editTaskFromApiCall({
-        ...currentTask,
-        assignedTo: newAssignedUserObj,
-        notes: [
-          ...currentTask.notes,
-          {
-            userDetails: currentUser,
-            noteId: Date.now(),
-            text: `Task reassigned to ${newAssignedUserObj.username} by ${currentUser.username}`,
-            timestamp: new Date(),
-            isComment: false,
-          },
-        ],
-      });
-      setCurrentTask(resultTask);
-      updateTask(resultTask); // Update the tasks list in the parent context
-    } catch (error) {
-      console.error("Error updating task:", error);
-    }
-  };
-
-  const handleStateChange = async (e) => {
-    const newState = e.target.value;
-
-    try {
-      const resultTask = await editTaskFromApiCall({
-        ...currentTask,
-        state: newState,
-        notes: [
-          ...currentTask.notes,
-          {
-            userDetails: currentUser,
-            noteId: Date.now(),
-            text: `Task status changed to ${newState} by ${currentUser.username}`,
-            timestamp: new Date(),
-            isComment: false,
-          },
-        ],
-      });
-      setCurrentTask(resultTask);
-      updateTask(resultTask); // Update the tasks list in the parent context
-    } catch (error) {
-      console.error("Error updating task state:", error);
-    }
-  };
 
   const handleAddNote = () => {
     if (newNote.trim()) {
@@ -139,12 +89,16 @@ function ShowTask() {
                 <h3 className="font-semibold text-xl mb-4">Notes & Comments</h3>
                 <div className="space-y-4">
                   {currentTask.notes?.map((note) => (
-                    <div key={note.noteId} className="flex items-start gap-4 bg-gray-100 p-4 rounded-lg">
+                    <div
+                      key={note.noteId}
+                      className={`flex items-start gap-4 p-4 rounded-lg ${note.isComment ? "bg-blue-50 text-blue-800" : "bg-green-50 text-green-800"
+                        }`}
+                    >
                       <img src={default_avatar} alt={`${note.userDetails.username}'s avatar`} className="w-12 h-12 rounded-full object-cover" />
                       <div className="flex flex-col">
                         <p className="font-medium">{note.userDetails.username} {note.isComment ? "(Comment)" : "(Note)"}</p>
-                        <p className="text-sm text-gray-700">{note.text}</p>
-                        <p className="text-xs text-gray-500 mt-1">{formatTimestamp(note.timestamp)}</p>
+                        <p className="text-sm">{note.text}</p>
+                        <p className="text-xs mt-1 text-gray-500">{formatTimestamp(note.timestamp)}</p>
                       </div>
                     </div>
                   ))}
@@ -153,30 +107,7 @@ function ShowTask() {
 
             </div>
 
-            <div className="bg-gray-100 w-[28%] h-[95%] rounded-lg flex self-end text-sm overflow-y-auto">
-              <div className="w-full p-3 flex flex-col gap-3">
-                <div className="w-full bg-gray-200 rounded-lg px-3 py-2">
-                  <label className="font-[500] inline">State : </label>
-                  <select className="ml-2 p-2 rounded bg-white" value={currentTask.state || ""} onChange={handleStateChange}>
-                    <option value="Todos">Todos</option>
-                    <option value="InProgress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Failed">Failed</option>
-                  </select>
-                </div>
-
-                <div className="w-full bg-gray-200 rounded-lg px-3 py-2">
-                  <label className="font-[500] inline">Assigned : </label>
-                  <select className="ml-2 p-2 rounded bg-white" value={currentTask.assignedTo?._id || ""} onChange={handleUserChange}>
-                    {usersList.map((user) => (
-                      <option key={user._id} value={user._id}>
-                        {user.username}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
+            <ShowTaskRightPanel />
           </div>
         </div>
       )}

@@ -72,9 +72,12 @@ function CreateTaskModal({ show, onClose }) {
                             avatar: currentUser.avatar,
                             role: currentUser.role,
                         },
-                        text: `Task created by ${currentUser.username} on ${new Date().toLocaleDateString()}`,
+                        text: `Task created by ${currentUser.username}`,
+                        noteId: Date.now(),
                         avatar: currentUser.avatar,
+                        timestamp: new Date(),
                         type: 'Note',
+                        isComment: false,
                     },
                 ],
             };
