@@ -213,7 +213,7 @@ export const AuthProvider = ({ children }) => {
       const tasks = response.data;
       return tasks
     } catch (error) {
-      return `Error creating task: ${error.response?.data?.message || error.message}`;
+      return `Task is Empty or ${error.response?.data?.message || error.message}`;
     }
   }
 
@@ -236,16 +236,37 @@ export const AuthProvider = ({ children }) => {
     setUsersList(response.length > 0 ? response : []);
   };
 
+
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const fetchTasksData = async () => {
+    try {
+      const tasks = await getAllTasksApiCall();
+      setAllTasks(tasks);
+      setFilteredTasks(tasks); // Initialize with all tasks
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
   // Inside AuthContext.js
   const [allTasks, setAllTasks] = useState([]);
-
   const updateTask = (updatedTask) => {
     setAllTasks(prevTasks =>
       prevTasks.map(task => task._id === updatedTask._id ? updatedTask : task)
     );
   };
 
-
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    });
+  };
 
   const values = {
     AdminData,
@@ -271,8 +292,9 @@ export const AuthProvider = ({ children }) => {
     getAllTasksApiCall,
     usersList, fetchUsersData,
     editTaskFromApiCall,
-    allTasks, setAllTasks, updateTask
-
+    allTasks, setAllTasks, updateTask,
+    filteredTasks, setFilteredTasks, fetchTasksData,
+    formatTimestamp
   };
 
   return <AuthContext.Provider value={values} > {children}</AuthContext.Provider >;

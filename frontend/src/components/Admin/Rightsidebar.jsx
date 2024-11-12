@@ -3,30 +3,21 @@ import { useTrelloContext } from '../../contexts/TrelloContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function Rightsidebar() {
-    const { getAllUsersApiCall, getAllTasksApiCall, fetchUsersData, usersList, allTasks, setAllTasks } = useAuthContext();
-    const { isRightSidebarOpen, toggleRightSidebar, handleCurrentTaskInAdminDashboard, statusColors } = useTrelloContext();
+    const { fetchUsersData, fetchTasksData,
+        usersList = [], allTasks = [], filteredTasks = [], setFilteredTasks, formatTimestamp
+    } = useAuthContext();
+
+    const { isRightSidebarOpen, toggleRightSidebar, handleCurrentTaskInAdminDashboard, statusColors = {} } = useTrelloContext();
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
     const [tempFilters, setTempFilters] = useState(['All']);
     const [selectedStatusFilters, setSelectedStatusFilters] = useState([]);
     const [tempStatusFilters, setTempStatusFilters] = useState([]);
-
     const [showDropdown, setShowDropdown] = useState(false);
-    const [filteredTasks, setFilteredTasks] = useState([]);
-
-    const fetchTasksData = async () => {
-        try {
-            const tasks = await getAllTasksApiCall();
-            setAllTasks(tasks);
-            setFilteredTasks(tasks); // Initialize with all tasks
-        } catch (error) {
-            console.error("Error fetching tasks:", error);
-        }
-    };
 
     useEffect(() => {
-        fetchUsersData();
-        fetchTasksData();
+        fetchUsersData && fetchUsersData();
+        fetchTasksData && fetchTasksData();
     }, []);
 
     const handleTempFilterChange = (user) => {
@@ -55,19 +46,19 @@ function Rightsidebar() {
         setShowDropdown(false);
     };
 
-    // Filter tasks whenever selectedFilters, selectedStatusFilters, or allTasks change
+
     useEffect(() => {
-        const filtered = allTasks.filter(task => {
-            const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(task.state.toLowerCase());
-            const userMatch = selectedFilters.includes('All') || selectedFilters.includes(task.assignedTo.username);
-            return statusMatch && userMatch;
-        });
-        setFilteredTasks(filtered);
+        if (!allTasks.includes("Task is Empty")) {
+            const filtered = allTasks.filter(task => {
+                const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(task.state?.toLowerCase());
+                const userMatch = selectedFilters.includes('All') || selectedFilters.includes(task.assignedTo?.username);
+                return statusMatch && userMatch;
+            });
+            setFilteredTasks(filtered);
+        }
     }, [selectedFilters, selectedStatusFilters, allTasks]);
 
-
-
-    const taskCount = filteredTasks.length;
+    const taskCount = filteredTasks.includes("Task is Empty") ? 0 : filteredTasks.length;
 
     return (
         <div className='flex items-center'>
@@ -141,23 +132,30 @@ function Rightsidebar() {
                             )}
                         </div>
 
-                        {/* Task List with Scrollbar */}
                         <div className="task-list h-full custom-scrollbar overflow-y-auto pr-2 text-gray-600">
-                            {filteredTasks.length === 0 ?
+                            {(!filteredTasks || filteredTasks.length === 0) ? (
                                 <div className='cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white'>
-                                    No Data
+                                    No Tasks
                                 </div>
-                                :
-                                filteredTasks.map((task) => (
-                                    <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task._id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state].border || "Todos"}`}>
-                                        <div className='text-sm'># {task._id}</div>
-                                        <h3 className="text-gray-800 font-semibold text-lg">{task.title}</h3>
-                                        <p className="text-sm text-gray-600  mb-2">Description: {task.description}</p>
-                                        <p className="text-sm font-medium text-gray-900 rounded-lg">Assigned To: {task.assignedTo.username}
-                                        </p>
-                                        <p className="text-sm font-medium text-gray-900 py-1 rounded-lg">Status: {task.state || "No Data"}</p>
-                                    </div>
-                                ))}
+                            ) :
+
+                                (!filteredTasks.includes("Task is Empty")) ?
+                                    (
+                                        filteredTasks.map((task) => (
+                                            <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task._id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state]?.border || "Todos"}`}>
+
+                                                <div className='text-sm'># {task._id}</div>
+                                                <h3 className="text-gray-800 font-semibold text-lg">{task.title}</h3>
+                                                <p className="text-sm text-gray-600 mb-2">Description: {task.description}</p>
+                                                <p className="text-sm font-medium text-gray-900 rounded-lg">Assigned To: {task.assignedTo?.username || "Unassigned"}</p>
+                                                <p className="text-sm font-medium text-gray-900 py-1 rounded-lg">Status: {task.state || "No Data"}</p>
+                                            </div>
+                                        ))
+                                    ) :
+                                    (<div className='cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white'>
+                                        No Tasks
+                                    </div>)
+                            }
                         </div>
                     </div>
                 )}

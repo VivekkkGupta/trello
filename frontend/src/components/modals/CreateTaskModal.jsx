@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 function CreateTaskModal({ show, onClose }) {
-    const { getAllUsersApiCall, createTaskFromApiCall } = useAuthContext();
+    const { getAllUsersApiCall, createTaskFromApiCall, fetchTasksData, currentUser, formatTimestamp } = useAuthContext();
 
     // Single object for task data
     const [taskData, setTaskData] = useState({
@@ -30,7 +30,6 @@ function CreateTaskModal({ show, onClose }) {
         getDataAndSaveInOptions();
     }, [show]);
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTaskData(prevData => ({ ...prevData, [name]: value }));
@@ -45,7 +44,6 @@ function CreateTaskModal({ show, onClose }) {
             }
         }
     }
-
 
     const handleSave = async () => {
         const { title, description, dueDate } = taskData;
@@ -62,16 +60,36 @@ function CreateTaskModal({ show, onClose }) {
         }
 
         try {
-            const resultText = await createTaskFromApiCall(taskData);
-            console.log(resultText)
+            // Add a note to taskData
+            const newTask = {
+                ...taskData,
+                notes: [
+                    {
+                        userDetails: {
+                            _id: currentUser._id,
+                            username: currentUser.username,
+                            email: currentUser.email,
+                            avatar: currentUser.avatar,
+                            role: currentUser.role,
+                        },
+                        text: `Task created by ${currentUser.username} on ${new Date().toLocaleDateString()}`,
+                        avatar: currentUser.avatar,
+                        type: 'Note',
+                    },
+                ],
+            };
+
+            const resultText = await createTaskFromApiCall(newTask);
             setMessage({ text: `Task Created id: ${resultText._id}`, type: 'success' });
+            // onTaskCreated(resultText);
+            fetchTasksData()
             clearModalStates();
+
         } catch (error) {
             console.error("Error in handleSave:", error);
             setMessage({ text: "Failed to create task", type: 'error' });
         }
     };
-
 
     const clearModalStates = () => {
         setTaskData({

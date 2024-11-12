@@ -7,14 +7,7 @@ const taskSchema = new Schema({
   state: String,
   assignedTo: {},
   state: String,
-  notes: [
-    {
-      userDetails: {},
-      text: String,
-      avatar: String,
-      type: String, // "Note" , "comment"
-    },
-  ],
+  notes: [],
 });
 
 export default model("Task", taskSchema);
