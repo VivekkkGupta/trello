@@ -3,7 +3,7 @@ import axios from "axios";
 import { AdminData, UserData } from "../data/AuthData";
 import TaskData from "../data/TaskData";
 
-const BASE_URL = "http://127.0.0.1:5555";
+const BASE_URL = "https://trello-backend-qm01.onrender.com";
 
 export const AuthContext = createContext(null);
 export const useAuthContext = () => useContext(AuthContext);
@@ -264,6 +264,7 @@ export const AuthProvider = ({ children }) => {
     filteredTasks,
     currentTask,
     newComment,
+    setShowProfileDropDown,
     setNewComment,
     setFilteredTasks,
     handleLoginOrSignUpPage,

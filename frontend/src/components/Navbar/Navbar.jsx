@@ -15,7 +15,9 @@ function Navbar() {
         <div className='h-[3rem] bg-opacity-60 bg-black border-b-[1px] border-opacity-40 border-gray-100'>
             <div className='innerdiv flex h-full w-full items-center justify-between px-10'>
                 <div className='leftitems flex gap-[4rem] items-center'>
-                    <div className='text-2xl font-bold'>Trello</div>
+
+                    <div className='text-3xl font-bold cursor-pointer'><i className="ri-dashboard-fill"></i>&nbsp;Trello</div>
+
                     <div className='flex h-full w-full gap-2 items-center'>
                         <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
                             Workspaces <i className="ri-arrow-drop-down-line"></i>
@@ -42,7 +44,7 @@ function Navbar() {
                         {showProfileDropDown && (
                             <div
                                 onClick={handleLogout}
-                                className="absolute bg-black bg-opacity-80 rounded-lg right-0 px-6 py-2 top-[90%]">
+                                className="absolute bg-black bg-opacity-80 rounded-lg right-0 px-6 py-2 top-[90%] z-10">
                                 Logout
                             </div>
                         )}

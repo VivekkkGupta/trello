@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useTrelloContext } from "../../contexts/TrelloContext";
-import { useAuthContext } from "../../contexts/AuthContext";
-import default_avatar from "../../assets/images/default_avatar.jpg";
+import { useTrelloContext } from "../../../contexts/TrelloContext";
+import { useAuthContext } from "../../../contexts/AuthContext";
+import default_avatar from "../../../assets/images/default_avatar.jpg";
 import ShowTaskRightPanel from "./ShowTaskRightPanel";
 import ShowNotesInShowTask from "./ShowNotesInShowTask";
 

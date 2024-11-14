@@ -1,6 +1,6 @@
 import React from 'react'
-import { useAuthContext } from '../../contexts/AuthContext'
-import default_avatar from "../../assets/images/default_avatar.jpg";
+import { useAuthContext } from '../../../contexts/AuthContext'
+import default_avatar from "../../../assets/images/default_avatar.jpg";
 
 function ShowNotesInShowTask() {
     const { currentTask, formatTimestamp } = useAuthContext();

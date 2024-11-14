@@ -1,6 +1,6 @@
 // Adminmaincontent.js
 import React from 'react';
-import ShowTask from './ShowTask';
+import ShowTask from './ShowTask/ShowTask';
 import TaskStatsChart from './TaskStatsChart';
 
 function Adminmaincontent() {

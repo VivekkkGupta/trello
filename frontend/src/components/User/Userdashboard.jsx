@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../Sidebar/Sidebar';
-import Maincontent from '../Maincontent/Maincontent';
+import Maincontent from './Maincontent/Maincontent';
 import { useTrelloContext } from '../../contexts/TrelloContext';
 
 function UserDashboard() {
@@ -12,7 +12,7 @@ function UserDashboard() {
             <Navbar />
             <div className="flex h-[calc(100%-3rem)] overflow-hidden">
                 <Sidebar className="h-full" />
-                {/* <Maincontent className="h-full overflow-y-scroll" /> */}
+                <Maincontent className="h-full overflow-y-scroll" />
             </div>
         </div>
     );

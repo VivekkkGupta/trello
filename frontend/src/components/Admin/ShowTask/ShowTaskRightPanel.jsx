@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuthContext } from '../../../contexts/AuthContext';
 
 function ShowTaskRightPanel() {
     const { handleStateChange, handleUserChange, currentTask, usersList, formatTimestamp } = useAuthContext();
