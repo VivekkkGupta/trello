@@ -25,7 +25,7 @@ function Sidebar() {
 
                     <ColorPanel />
 
-                    <div className='options flex flex-col border-b-[1px] border-white border-opacity-40'>
+                    {/* <div className='options flex flex-col border-b-[1px] border-white border-opacity-40'>
                         <div className='w-full h-9 flex items-center gap-2 p-3 font-[400]'>
                             <i className="ri-dashboard-fill"></i>
                             Board Views
@@ -38,7 +38,7 @@ function Sidebar() {
                             <i className="ri-list-check"></i>
                             List
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className='w-full flex items-center mt-1 flex-col'>
                         <div className='w-full flex items-center gap-2 font-[400] p-3'>

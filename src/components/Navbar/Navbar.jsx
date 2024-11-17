@@ -18,18 +18,18 @@ function Navbar() {
 
                     <div className='text-3xl font-bold cursor-pointer'><i className="ri-dashboard-fill"></i>&nbsp;Trello</div>
 
-                    <div className='flex h-full w-full gap-2 items-center'>
-                        <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
+                    <div className='pl-10 flex h-full w-full gap-2 items-center'>
+                        {/* <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
                             Workspaces <i className="ri-arrow-drop-down-line"></i>
                         </div>
                         <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
                             Starred <i className="ri-arrow-drop-down-line"></i>
-                        </div>
+                        </div> */}
                         <div
-                            className='px-3 py-1 cursor-pointer rounded-sm bg-white bg-opacity-40 font-[300]'
+                            className='px-3 py-1 cursor-pointer rounded-sm bg-white bg-opacity-30 font-[500]'
                             onClick={() => setShowCreateModal(true)}
                         >
-                            Create
+                            Create Task
                         </div>
                     </div>
                 </div>
