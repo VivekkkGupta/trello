@@ -9,10 +9,13 @@ function CreateTaskModal({ show, onClose }) {
         title: '',
         description: '',
         dueDate: '',
+        createdDate: '',
+        dueStatus: {},
         assignedTo: 'unassigned',
         state: "Todos",
         assignedToObj: {}
     });
+
 
     const [usersList, setUsersList] = useState([]);
     const [errors, setErrors] = useState({});
@@ -63,6 +66,7 @@ function CreateTaskModal({ show, onClose }) {
             // Add a note to taskData
             const newTask = {
                 ...taskData,
+                createdDate: new Date(),
                 notes: [
                     {
                         userDetails: {

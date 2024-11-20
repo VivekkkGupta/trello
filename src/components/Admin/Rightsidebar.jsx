@@ -142,11 +142,11 @@ function Rightsidebar() {
                                 (!filteredTasks.includes("Task is Empty")) ?
                                     (
                                         filteredTasks.map((task) => (
-                                            <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task._id} className={`cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state]?.border || "Todos"}`}>
+                                            <div onClick={() => handleCurrentTaskInAdminDashboard(task)} key={task._id} className={` cursor-pointer p-4 mb-2 rounded-md shadow-sm border-l-4 bg-white ${statusColors[task.state]?.border || "Todos"}`}>
 
                                                 <div className='text-sm'># {task._id}</div>
-                                                <h3 className="text-gray-800 font-semibold text-lg">{task.title}</h3>
-                                                <p className="text-sm text-gray-600 mb-2">Description: {task.description}</p>
+                                                <h3 className="text-gray-800 font-semibold text-lg truncate">{task.title}</h3>
+                                                <p className="text-sm text-gray-600 mb-2 truncate">Description: {task.description}</p>
                                                 <p className="text-sm font-medium text-gray-900 rounded-lg">Assigned To: {task.assignedTo?.username || "Unassigned"}</p>
                                                 <p className="text-sm font-medium text-gray-900 py-1 rounded-lg">Status: {task.state || "No Data"}</p>
                                             </div>

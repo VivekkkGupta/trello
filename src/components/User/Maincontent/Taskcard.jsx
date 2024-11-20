@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TaskModal from './TaskModal'; // Import the TaskModal component
+import TaskModal from './TaskModal/TaskModal'; // Import the TaskModal component
 
 const Taskcard = ({ task, onDragStart, isDragging }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,34 +15,37 @@ const Taskcard = ({ task, onDragStart, isDragging }) => {
                 onDragStart={onDragStart}
                 onClick={() => setIsModalOpen(true)} // Open the modal on click
             >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-center">
                     {/* Task ID and Title */}
-                    <h3 className="text-md font-semibold text-gray-800">
-                        #{task.id} {task.title}
+                    <h3 className="text-md font-semibold text-gray-600 truncate text-xs">
+                        # {task._id}
                     </h3>
                     {/* Task Status */}
                     <span
                         className={`text-xs font-medium px-2 py-1 rounded-full ${task.state === 'Todos'
-                                ? 'bg-blue-500'
-                                : task.state === 'InProgress'
-                                    ? 'bg-yellow-400'
-                                    : task.state === 'Done'
-                                        ? 'bg-green-500'
-                                        : 'bg-red-500'
+                            ? 'bg-blue-500'
+                            : task.state === 'InProgress'
+                                ? 'bg-yellow-400'
+                                : task.state === 'Done'
+                                    ? 'bg-green-500'
+                                    : 'bg-red-500'
                             } text-white`}
                     >
                         {task.state}
                     </span>
                 </div>
+                <h3 className="mt-1 text-md font-semibold text-gray-900 truncate">
+                    {task.title}
+                </h3>
                 {/* Task Description */}
-                <p className="text-sm text-gray-600 mt-2">{task.description}</p>
+                <p className="text-xs text-gray-600 mt-1">{task.description}</p>
                 {/* Task Assigned User */}
-                <div className="mt-2 text-xs text-gray-500">
+                {/* <div className="mt-3 text-xs text-gray-500">
                     Assigned to: {task.assignedTo.username}
-                </div>
+                </div> */}
                 {/* Due Date */}
                 <div
-                    className={`mt-2 text-xs font-semibold ${isOverdue ? 'text-red-500' : 'text-green-500'
+                    className={`mt-4 text-xs font-semibold ${isOverdue ? 'text-red-500' : 'text-green-500'
                         }`}
                 >
                     Due Date: {new Date(task.dueDate).toLocaleDateString()}{' '}
@@ -53,7 +56,7 @@ const Taskcard = ({ task, onDragStart, isDragging }) => {
             </div>
             {/* Task Modal */}
             {isModalOpen && (
-                <TaskModal task={task} onClose={() => setIsModalOpen(false)} />
+                <TaskModal taskfromparent={task} onClose={() => setIsModalOpen(false)} />
             )}
         </>
     );
