@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
-import CreateTaskModal from '../Modals/CreateTaskModal';
+import CreateTaskModal from '../modals/CreateTaskModal'
 
 function Navbar() {
     const { handleLogout, showProfileDropDown, setShowProfileDropDown } = useAuthContext();
     const [showCreateModal, setShowCreateModal] = useState(false);
-
 
     const handleCancel = () => {
         setShowCreateModal(false);
