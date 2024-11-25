@@ -3,7 +3,7 @@ import Taskcard from './Taskcard';
 import { useAuthContext } from '../../../contexts/AuthContext';
 
 const Taskboard = () => {
-    const { currentUser, allTasks, editTaskFromApiCall } = useAuthContext();
+    const { currentUser, allTasks, editTaskFromApiCall, updateTask } = useAuthContext();
 
     const [draggedTask, setDraggedTask] = useState(null);
     const [draggedTaskId, setDraggedTaskId] = useState(null); // Track dragged task's ID

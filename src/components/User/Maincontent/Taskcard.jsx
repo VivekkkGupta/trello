@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import TaskModal from './TaskModal/TaskModal'; // Import the TaskModal component
 
 const Taskcard = ({ task, onDragStart, isDragging }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const isOverdue = new Date(task.dueDate) < new Date(); // Check if the due date is in the past
+
+    // Memoize the onClose function to avoid unnecessary re-renders
+    const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
 
     return (
         <>

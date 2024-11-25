@@ -2,62 +2,60 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../../../contexts/AuthContext";
 import default_avatar from "../../../../assets/images/default_avatar.jpg";
 
-const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
-    const { formatTimestamp } = useAuthContext();
-    const { usersList } = useAuthContext();
+const TaskModal = ({ taskfromparent, onClose }) => {
+    const { formatTimestamp, usersList, currentUser, editTaskFromApiCall, fetchTasksData } = useAuthContext();
+
+    const [currentTaskInView, setCurrentTaskInView] = useState(taskfromparent)
     const [newNote, setNewNote] = useState("");
-    const [notes, setNotes] = useState(taskfromparent.notes || []);
-    const [newState, setNewState] = useState(taskfromparent.state);
-    const [newAssignee, setNewAssignee] = useState(
-        taskfromparent.assignedTo?._id || ""
-    );
+
+
+
+    const addNote = (text, isComment = false) => {
+        const updatedTask = {
+            ...currentTaskInView,
+            notes: [
+                ...currentTaskInView.notes,
+                {
+                    userDetails: currentUser,
+                    noteId: Date.now(), // Unique note ID
+                    text,
+                    timestamp: new Date(),
+                    type: "comment",
+                    isComment, // Flag to distinguish between notes and comments
+                },
+            ],
+        };
+        return updatedTask;
+    };
 
     // Add a new note (comment)
-    const handleAddComment = () => {
+    const handleAddComment = async () => {
         if (newNote.trim()) {
-            const updatedNotes = [
-                ...notes,
-                `Comment: ${newNote} on ${new Date().toLocaleString()}`,
-            ];
-            setNotes(updatedNotes);
+            const updatedTask = addNote(newNote.trim(), true);
+            await editTaskFromApiCall(updatedTask)
+            setCurrentTaskInView(updatedTask)
             setNewNote("");
+            await fetchTasksData()
         }
     };
 
-    useEffect(() => {
-        console.log(notes)
-    }, [notes])
+    const handleTaskStateAndAssignedTo = async (e) => {
+        const { name, value } = e.target;
+        const updatedTask = {
+            ...currentTaskInView,
+            [name]: value,
+        };
 
-    // Handle state or assignee change
-    const handleUpdateTask = async () => {
-        if (
-            newState !== taskfromparent.state ||
-            newAssignee !== taskfromparent.assignedTo?._id
-        ) {
-            const note = `Task ${newState !== taskfromparent.state
-                ? `state changed to '${newState}'`
-                : ""
-                }${newState !== taskfromparent.state &&
-                    newAssignee !== taskfromparent.assignedTo?._id
-                    ? " and "
-                    : ""
-                }${newAssignee !== taskfromparent.assignedTo?._id
-                    ? `assigned to '${usersList.find((u) => u._id === newAssignee)?.username
-                    }'`
-                    : ""
-                } on ${new Date().toLocaleString()}`;
+        // Update local state immediately to prevent UI lag
+        setCurrentTaskInView(updatedTask);
 
-            const updatedTask = await updateTaskStateAndAssignee(
-                taskfromparent._id,
-                { state: newState, assignedTo: newAssignee },
-                note
-            );
+        // Save the update to the backend
+        await editTaskFromApiCall(updatedTask);
 
-            if (updatedTask) {
-                setNotes([...notes, note]);
-            }
-        }
+        // Fetch latest data for consistency
+        await fetchTasksData();
     };
+
 
     return (
         <div className="fixed inset-0 -top-4 backdrop-blur-sm z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -67,34 +65,34 @@ const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
                     {/* Task Header */}
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xs font-semibold text-gray-600">
-                            # {taskfromparent._id}
+                            # {currentTaskInView._id}
                         </h2>
                     </div>
 
                     {/* Task Details */}
                     <div>
                         <h3 className="text-4xl font-bold text-gray-900">
-                            {taskfromparent.title}
+                            {currentTaskInView.title}
                         </h3>
                         <p className="mt-1 text-md text-gray-600">
-                            Description: {taskfromparent.description}
+                            Description: {currentTaskInView.description}
                         </p>
 
                         <div className="mt-4 dataoverdue text-xs text-gray-600">
                             <p className="  ">
                                 Created On:{" "}
-                                {new Date(taskfromparent.createdDate).toLocaleDateString()}
+                                {new Date(currentTaskInView.createdDate).toLocaleDateString()}
                             </p>
                             <p className="">
-                                Due Date: {new Date(taskfromparent.dueDate).toLocaleDateString()}
+                                Due Date: {new Date(currentTaskInView.dueDate).toLocaleDateString()}
                             </p>
                             <p
-                                className={`text-sm font-medium ${new Date() > new Date(taskfromparent.dueDate)
+                                className={`text-sm font-medium ${new Date() > new Date(currentTaskInView.dueDate)
                                     ? "text-red-500"
                                     : "text-green-500"
                                     }`}
                             >
-                                {new Date() > new Date(taskfromparent.dueDate)
+                                {new Date() > new Date(currentTaskInView.dueDate)
                                     ? "Overdue"
                                     : "Underdue"}
                             </p>
@@ -106,8 +104,9 @@ const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
                                 State:
                             </label>
                             <select
-                                value={newState}
-                                onChange={(e) => setNewState(e.target.value)}
+                                name="state"
+                                value={currentTaskInView.state}
+                                onChange={(e) => handleTaskStateAndAssignedTo(e)}
                                 className="inline border-0 border-gray-300 rounded ml-4"
                             >
                                 <option value="Todos">Todos</option>
@@ -123,8 +122,9 @@ const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
                                 Assign To:
                             </label>
                             <select
-                                value={newAssignee}
-                                onChange={(e) => setNewAssignee(e.target.value)}
+                                name="assignedTo"
+                                value={currentTaskInView.assignedTo}
+                                onChange={(e) => handleTaskStateAndAssignedTo(e)}
                                 className="inline border-0 border-gray-300 rounded ml-4"
                             >
                                 <option value="">Unassigned</option>
@@ -175,7 +175,7 @@ const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
                             Activities
                         </h3>
                         <ul className="space-y-2 text-sm text-gray-600 overflow-y-auto max-h-64 border-t border-gray-200 pt-2">
-                            {taskfromparent.notes.map((note, index) => (
+                            {currentTaskInView.notes.map((note, index) => (
                                 <li key={index} className="flex flex-col gap-3">
                                     <div className="flex items-center gap-5 min-h-5 min-w-5 ">
                                         <img
@@ -197,7 +197,7 @@ const TaskModal = ({ taskfromparent, onClose, updateTaskStateAndAssignee }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
