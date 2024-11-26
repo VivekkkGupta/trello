@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   // Authentication state and functions
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
-  const [loginOrSignUpPage, setLoginOrSignUpPage] = useState(false);
+  const [isSignInPage, setIsSignInPage] = useState(true)
   const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "" });
   const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "" });
 
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
   // Input handlers
   const handleInputBox = (e) => setUserInputData({ ...userInputData, [e.target.name]: e.target.value });
-  const handleLoginOrSignUpPage = () => setLoginOrSignUpPage((prev) => !prev);
+  const handleSignInAndSignUpButton = () => setIsSignInPage((prev) => !prev);
 
   // Authentication actions
   const handleSignUpClick = async () => {
@@ -256,7 +256,7 @@ export const AuthProvider = ({ children }) => {
     TaskData,
     currentUser,
     showProfileDropDown,
-    loginOrSignUpPage,
+    isSignInPage,
     userInputData,
     userInputErrors,
     usersList,
@@ -267,7 +267,7 @@ export const AuthProvider = ({ children }) => {
     setShowProfileDropDown,
     setNewComment,
     setFilteredTasks,
-    handleLoginOrSignUpPage,
+    handleSignInAndSignUpButton,
     handleSignUpClick,
     handleLoginButton,
     handleLogout,
