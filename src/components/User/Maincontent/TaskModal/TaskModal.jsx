@@ -9,7 +9,6 @@ const TaskModal = ({ taskfromparent, onClose }) => {
     const [newNote, setNewNote] = useState("");
 
 
-
     const addNote = (text, isComment = false) => {
         const updatedTask = {
             ...currentTaskInView,

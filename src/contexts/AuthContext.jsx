@@ -18,8 +18,8 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
   const [isSignInPage, setIsSignInPage] = useState(true)
-  const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "" });
-  const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "" });
+  const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "", confirmPassword: "" });
+  const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "", confirmPassword: "" });
 
   // Admin dashboard task management state
   const [currentTask, setCurrentTask] = useState(null);
@@ -47,6 +47,11 @@ export const AuthProvider = ({ children }) => {
     if (!inputData.email) errors.email = "Email is Required";
     else if (!isValidEmail(inputData.email)) errors.email = "Email is not valid";
     if (!inputData.password) errors.password = "Password is Required";
+    if (!isSignInPage) {
+      if (!inputData.confirmPassword) errors.confirmPassword = "Confirm Password is Required";
+      if (inputData.password !== inputData.confirmPassword) errors.confirmPassword = "Passwords do not match";
+      if (!inputData.username) errors.username = "Username is Required"
+    }
     return errors;
   };
 
@@ -59,41 +64,49 @@ export const AuthProvider = ({ children }) => {
     const errors = checkAndSetErrors(userInputData);
     if (Object.keys(errors).length > 0) return setUserInputErrors(errors);
 
-    try {
-      const res = await axios.post(`${BASE_URL}/userapi/createuser`, userInputData);
-      if (res.data.error) alert(res.data.error);
-      else {
-        alert("User Created Successfully");
-        setUserInputData({ username: "", email: "", password: "" });
-        setUserInputErrors({ username: "", email: "", password: "" });
-      }
-    } catch (error) {
-      alert(
-        error.response?.status === 409
-          ? "This email ID is already registered. Please use a different email."
-          : "An unexpected error occurred. Please try again."
-      );
-    }
+
   };
 
   const handleLoginButton = async () => {
     const errors = checkAndSetErrors(userInputData);
     if (Object.keys(errors).length > 0) return setUserInputErrors(errors);
 
-    try {
-      const response = await axios.post(`${BASE_URL}/userapi/login`, userInputData);
-      if (response.data.message === "Login successful") {
-        setLocalAuthData(response.data.user);
-        setCurrentUser(response.data.user);
-        setUserInputData({ email: "", password: "" });
-      } else {
-        setUserInputErrors({ ...userInputErrors, password: response.data.error });
+    if (isSignInPage) {
+      try {
+        const response = await axios.post(`${BASE_URL}/userapi/login`, userInputData);
+        if (response.data.message === "Login successful") {
+          setLocalAuthData(response.data.user);
+          setCurrentUser(response.data.user);
+          setUserInputData({ email: "", password: "", confirmPassword: "" });
+        } else {
+          setUserInputErrors({ ...userInputErrors, password: response.data.error });
+        }
+      } catch (error) {
+        setUserInputErrors({
+          ...userInputErrors,
+          password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again.",
+        });
       }
-    } catch (error) {
-      setUserInputErrors({
-        ...userInputErrors,
-        password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again.",
-      });
+    }
+    else {
+      try {
+        const res = await axios.post(`${BASE_URL}/userapi/createuser`, userInputData);
+        if (res.data.error) {
+          setUserInputErrors({ ...userInputErrors, email: res.data.error });
+        }
+        else {
+          alert("User Created Successfully");
+          setUserInputData({ email: "", password: "", confirmPassword: "" });
+          setUserInputErrors({ email: "", password: "", confirmPassword: "" });
+          setIsSignInPage(true)
+        }
+      } catch (error) {
+        alert(
+          error.response?.status === 409
+            ? "This email ID is already registered. Please use a different email."
+            : "An unexpected error occurred. Please try again."
+        );
+      }
     }
   };
 

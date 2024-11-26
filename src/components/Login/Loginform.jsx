@@ -4,9 +4,7 @@ const LoginForm = () => {
   const {
     handleLoginOrSignUpPage,
     userInputData,
-    setUserInputData,
     userInputErrors,
-    setUserInputErrors,
     handleInputBox,
     handleLoginButton,
   } = useAuthContext();

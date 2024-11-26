@@ -4,7 +4,7 @@ import Signupform from "./Signupform";
 import { useAuthContext } from "../../contexts/AuthContext";
 
 function LoginPageLayout() {
-  const { isSignInPage, handleSignInAndSignUpButton } = useAuthContext();
+  const { isSignInPage, handleSignInAndSignUpButton, handleInputBox, userInputData, userInputErrors, handleLoginButton } = useAuthContext();
 
   const [signInOrSignUpText, setSignInOrSignUpText] = useState("");
 
@@ -25,7 +25,7 @@ function LoginPageLayout() {
               Trello
             </h1>
           </div>
-          <div className="mt-12 flex flex-col items-center">
+          <div className="mt-8 flex flex-col items-center">
             <h1 className="text-2xl xl:text-3xl font-extrabold">
               {signInOrSignUpText}
             </h1>
@@ -56,7 +56,7 @@ function LoginPageLayout() {
                   <span className="ml-4">{signInOrSignUpText} with Google</span>
                 </button>
 
-                <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5">
+                {/* <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5">
                   <div className="bg-white p-1 rounded-full">
                     <svg className="w-6" viewBox="0 0 32 32">
                       <path
@@ -66,7 +66,7 @@ function LoginPageLayout() {
                     </svg>
                   </div>
                   <span className="ml-4">{signInOrSignUpText} with GitHub</span>
-                </button>
+                </button> */}
               </div>
 
               <div className="my-12 border-b text-center">
@@ -76,17 +76,68 @@ function LoginPageLayout() {
               </div>
 
               <div className="mx-auto max-w-xs">
+                {
+                  isSignInPage ?
+                    "" : (
+                      <>
+                        <input
+                          onChange={handleInputBox}
+                          className={`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border  placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white  ${userInputErrors.username ? "border-red-500" : "border-gray-200 mb-5"}`}
+                          type="text"
+                          name="username"
+                          placeholder="Username"
+                          value={userInputData.username}
+                        />
+                        {userInputErrors.username && (
+                          <div className={`text-red-500 text-xs ml-2 mt-2  ${userInputErrors.username ? "mb-5" : "border-gray-200"}`}>{userInputErrors.username}</div>
+                        )}
+                      </>
+                    )
+                }
                 <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  onChange={handleInputBox}
+                  className={`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border  placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white  ${userInputErrors.email ? "border-red-500" : "border-gray-200"}`}
                   type="email"
+                  name="email"
                   placeholder="Email"
+                  value={userInputData.email}
                 />
+                {userInputErrors.email && (
+                  <div className="text-red-500 text-xs ml-2 mt-2">{userInputErrors.email}</div>
+                )}
                 <input
-                  className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                  onChange={handleInputBox}
+                  className={`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 ${userInputErrors.password ? "border-red-500" : "border-gray-200"}`}
                   type="password"
+                  name="password"
                   placeholder="Password"
+                  value={userInputData.password}
                 />
-                <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                {userInputErrors.password && (
+                  <div className="text-red-500 text-xs ml-2 mt-2">{userInputErrors.password}</div>
+                )}
+                {
+                  isSignInPage ?
+                    "" : (
+                      <>
+                        <input
+                          onChange={handleInputBox}
+                          className={`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 ${userInputErrors.confirmPassword ? "border-red-500" : "border-gray-200"}`}
+                          type="password"
+                          name="confirmPassword"
+                          placeholder="Confirm Password"
+                          value={userInputData.confirmPassword}
+                        />
+                        {userInputErrors.confirmPassword && (
+                          <div className="text-red-500 text-xs ml-2 mt-2">{userInputErrors.confirmPassword}</div>
+                        )}
+                      </>
+                    )
+                }
+
+                <button
+                  onClick={handleLoginButton}
+                  className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                   {isSignInPage ? (
                     <svg
                       className="w-6 h-6 -ml-2"
@@ -128,19 +179,19 @@ function LoginPageLayout() {
                   </a>
                 </p>
                 <p className="mt-3 text-xs text-gray-600 text-center">
-                  I agree to abide by Trello's&nbsp;
+                  I agree to abide by Trello's
                   <a
                     href="#"
                     className="border-b border-gray-500 border-dotted"
                   >
-                    Terms of Service
+                    &nbsp;Terms of Service&nbsp;
                   </a>
                   and its
                   <a
                     href="#"
                     className="border-b border-gray-500 border-dotted"
                   >
-                    Privacy Policy
+                    &nbsp;Privacy Policy&nbsp;
                   </a>
                 </p>
               </div>
