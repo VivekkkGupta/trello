@@ -12,8 +12,8 @@ const Taskcard = ({ task, onDragStart, isDragging }) => {
     return (
         <>
             <div
-                className={`bg-white shadow-lg rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-xl transition-all 
-                    ${isDragging ? 'opacity-50 border-2 border-black' : 'opacity-100'}`}
+                className={`bg-white shadow-lg rounded-lg p-4 border cursor-pointer hover:shadow-2xl duration-300 transition-all 
+                    ${isDragging ? 'opacity-50 border-1 border-black' : 'opacity-100'}`}
                 draggable
                 onDragStart={onDragStart}
                 onClick={() => setIsModalOpen(true)} // Open the modal on click

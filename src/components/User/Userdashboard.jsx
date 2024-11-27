@@ -10,7 +10,7 @@ function UserDashboard() {
     return (
         <div className={`w-full h-full ${selectedColor} text-white`}>
             <Navbar />
-            <div className="flex h-[calc(100%-3rem)] overflow-hidden">
+            <div className="flex h-[calc(100%-3.5rem)] overflow-hidden">
                 <Sidebar className="h-full" />
                 <Maincontent className="h-full overflow-y-scroll" />
             </div>

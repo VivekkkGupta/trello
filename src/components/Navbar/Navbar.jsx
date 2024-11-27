@@ -11,13 +11,17 @@ function Navbar() {
     };
 
     return (
-        <div className='h-[3rem] bg-opacity-60 bg-black border-b-[1px] border-opacity-40 border-gray-100'>
+        <div className='h-[3.5rem]  bg-gray-200 border-b-[2px] border-opacity-40 border-black text-black'>
             <div className='innerdiv flex h-full w-full items-center justify-between px-10'>
                 <div className='leftitems flex gap-[4rem] items-center'>
 
-                    <div className='text-3xl font-bold cursor-pointer'><i className="ri-dashboard-fill"></i>&nbsp;Trello</div>
+                    <div className='text-3xl flex font-bold cursor-pointer'>
+                        <i className="ri-dashboard-fill"></i>
+                        &nbsp;
+                        <h1 className='tracking-tighter text-indigo-800'>Trello</h1>
+                    </div>
 
-                    <div className='pl-10 flex h-full w-full gap-2 items-center'>
+                    <div className='pl-12 flex h-full w-full gap-2 items-center'>
                         {/* <div className='px-3 py-1 cursor-pointer rounded-sm hover:bg-white hover:bg-opacity-40 font-[300]'>
                             Workspaces <i className="ri-arrow-drop-down-line"></i>
                         </div>
@@ -25,7 +29,7 @@ function Navbar() {
                             Starred <i className="ri-arrow-drop-down-line"></i>
                         </div> */}
                         <div
-                            className='px-3 py-1 cursor-pointer rounded-sm bg-white bg-opacity-30 font-[500]'
+                            className='px-3 py-2 text-sm cursor-pointer rounded-sm bg-blue-600 hover:bg-blue-700 duration-300 transition-all text-white font-[500]'
                             onClick={() => setShowCreateModal(true)}
                         >
                             Create Task
@@ -43,7 +47,7 @@ function Navbar() {
                         {showProfileDropDown && (
                             <div
                                 onClick={handleLogout}
-                                className="absolute bg-black bg-opacity-80 rounded-lg right-0 px-6 py-2 top-[90%] z-10">
+                                className="absolute bg-gray-100 hover:bg-gray-200 border border-black hover:shadow-lg transition-all duration-300 rounded-lg right-0 px-6 py-2 top-[90%] z-10">
                                 Logout
                             </div>
                         )}

@@ -10,17 +10,17 @@ function Sidebar() {
 
     const { currentUser } = useAuthContext()
     return (
-        <div className={`relative h-full ${isSidebarOpen ? "w-1/5" : "w-6"} bg-opacity-50 bg-black transition-all duration-200`}>
-            <div className={`absolute ${isSidebarOpen ? "right-2 rotate-[180deg]" : "right-[-50%] rotate-0"} top-2 bg-white opacity-80 rounded-full h-8 w-8 flex items-center justify-center transition-all duration-200 cursor-pointer`}
+        <div className={`relative h-full ${isSidebarOpen ? "w-1/5" : "w-6"}  bg-gray-200 transition-all duration-300 text-black  border-r border-opacity-40  border-black shadow-lg`}>
+            <div className={`absolute ${isSidebarOpen ? "right-2 rotate-[180deg]" : "right-[-50%] rotate-0"} top-2 opacity-80 rounded-full h-8 w-8 flex items-center justify-center transition-all duration-300 cursor-pointe bg-black text-white cursor-pointer`}
                 onClick={toggleSidebar}
             >
-                <i className="ri-arrow-drop-right-line text-2xl text-black"></i>
+                <i className="ri-arrow-drop-right-line text-2xl "></i>
             </div>
 
             {isSidebarOpen && (
                 <>
-                    <div className='nameplate h-12 w-full flex items-center justify-center border-b-[1px] border-white border-opacity-40 text-xl font-[400]'>
-                        Hello&nbsp;<span className='font-[500]'>{currentUser["username"]} !</span>
+                    <div className='nameplate h-12 w-full flex items-center justify-center border-b-[1px] border-black border-opacity-40 text-xl font-[400]'>
+                        Welcome&nbsp;<span className='font-[500]'>{currentUser["username"]} !</span>
                     </div>
 
                     <ColorPanel />
@@ -40,16 +40,16 @@ function Sidebar() {
                         </div>
                     </div> */}
 
-                    <div className='w-full flex items-center mt-1 flex-col'>
+                    <div className='w-full flex items-center flex-col'>
                         <div className='w-full flex items-center gap-2 font-[400] p-3'>
-                            Change Background
+                            Choose Background
                         </div>
-                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic font-[300]' onClick={toggleColorPanel}>
+                        <div className='w-full h-9 hover:bg-gray-500 hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic font-[300]' onClick={toggleColorPanel}>
                             <span className={`h-6 w-6 ${selectedColor} rounded-sm`}></span>
                             Colors
                         </div>
-                        <div className='w-full h-9 hover:bg-white hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic font-[300]'>
-                            <span className="h-6 w-6 bg-white rounded-sm"></span>
+                        <div className='w-full h-9 hover:bg-gray-500 hover:bg-opacity-40 cursor-pointer flex items-center gap-2 px-5 italic font-[300]'>
+                            <span className="h-6 w-6 bg-black rounded-sm"></span>
                             Images
                         </div>
                     </div>
