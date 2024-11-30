@@ -9,11 +9,13 @@ const TaskModal = ({ taskfromparent, onClose }) => {
     const [newNote, setNewNote] = useState("");
 
 
-    const addNote = (text, isComment = false) => {
+    // console.log(currentTaskInView)
+
+    const addNote = (myTask, text, isComment = false) => {
         const updatedTask = {
-            ...currentTaskInView,
+            ...myTask,
             notes: [
-                ...currentTaskInView.notes,
+                ...myTask.notes,
                 {
                     userDetails: currentUser,
                     noteId: Date.now(), // Unique note ID
@@ -40,16 +42,44 @@ const TaskModal = ({ taskfromparent, onClose }) => {
 
     const handleTaskStateAndAssignedTo = async (e) => {
         const { name, value } = e.target;
-        const updatedTask = {
-            ...currentTaskInView,
-            [name]: value,
-        };
+        let updatedTask;
+        let noteText = ""; // Initialize note text
 
-        // Update local state immediately to prevent UI lag
-        setCurrentTaskInView(updatedTask);
+        if (name === "assignedTo") {
+            // Find the selected user object by ID
+            const selectedUser = usersList.find((user) => user._id === value);
+            if (!selectedUser) {
+                console.error("Selected user not found");
+                return;
+            }
+
+            updatedTask = {
+                ...currentTaskInView,
+                assignedTo: selectedUser, // Assign the entire user object
+            };
+            noteText = `Task assigned to ${selectedUser.username}`;
+        } else {
+            updatedTask = {
+                ...currentTaskInView,
+                [name]: value,
+            };
+
+            if (name === "state") {
+                noteText = `Task state changed to ${value}`;
+            }
+        }
+
+        // console.log("Before adding note:", updatedTask)
+
+        // Automatically add a note for the change
+        updatedTask = addNote(updatedTask, noteText);
+        // console.log("After adding note:", updatedTask)
 
         // Save the update to the backend
         await editTaskFromApiCall(updatedTask);
+
+        // Update local state immediately to prevent UI lag
+        setCurrentTaskInView(updatedTask);
 
         // Fetch latest data for consistency
         await fetchTasksData();
@@ -57,8 +87,8 @@ const TaskModal = ({ taskfromparent, onClose }) => {
 
 
     return (
-        <div className="fixed inset-0 -top-4 backdrop-blur-sm z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-5xl shadow-lg tracking-wide flex">
+        <div className="fixed inset-0 -top-4 backdrop-blur-sm z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
+            <div className="bg-white rounded-lg p-6 w-full max-w-5xl shadow-lg tracking-wide flex" onClick={(e) => e.stopPropagation()}>
                 {/* Left Section */}
                 <div className="flex-1 pr-4 border-r border-gray-300">
                     {/* Task Header */}
@@ -122,11 +152,10 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                             </label>
                             <select
                                 name="assignedTo"
-                                value={currentTaskInView.assignedTo}
+                                value={currentTaskInView.assignedTo?._id || ""}
                                 onChange={(e) => handleTaskStateAndAssignedTo(e)}
                                 className="inline border-0 border-gray-300 rounded ml-4"
                             >
-                                <option value="">Unassigned</option>
                                 {usersList &&
                                     usersList.map((user) => (
                                         <option key={user._id} value={user._id}>
