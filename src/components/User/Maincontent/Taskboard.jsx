@@ -54,7 +54,9 @@ const Taskboard = () => {
     };
 
     useEffect(() => {
-        setCurrentUserTasks(allTasks.filter((task) => task.assignedTo._id === currentUser._id));
+        if (Array.isArray(allTasks)) {
+            setCurrentUserTasks(allTasks.filter((task) => task.assignedTo._id === currentUser._id));
+        }
     }, [allTasks, currentUser]);
 
     return (

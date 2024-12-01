@@ -12,10 +12,23 @@ function TaskStatsChart() {
     const { isRightSidebarOpen } = useTrelloContext()
     // Prepare data for the chart
     const chartData = usersList.map(user => {
-        const userTasks = allTasks.filter(task => task.assignedTo?._id === user._id);
-        const completedTasks = userTasks.filter(task => task.state === 'Completed');
-        const onTimeTasks = completedTasks.filter(task => new Date(task.dueDate) >= new Date(task.completedDate));
+        const userTasks = Array.isArray(allTasks)
+            ? allTasks.filter(task => task.assignedTo?._id === user._id)
+            : [];
+
+        const completedTasks = Array.isArray(userTasks)
+            ? userTasks.filter(task => task.state === 'Completed')
+            : [];
+
+        const onTimeTasks = Array.isArray(completedTasks)
+            ? completedTasks.filter(task => new Date(task.dueDate) >= new Date(task.completedDate))
+            : [];
+
         const overdueTasks = completedTasks.length - onTimeTasks.length;
+
+        // Optionally, you can handle cases where completedTasks or onTimeTasks is empty:
+        const overdueTasksCount = overdueTasks >= 0 ? overdueTasks : 0; // Ensure no negative count
+
 
         return {
             user: user.username,
