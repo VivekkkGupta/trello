@@ -1,7 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
-import { AdminData, UserData } from "../data/AuthData";
-import TaskData from "../data/TaskData";
 
 const BASE_URL = "https://trello-backend-qm01.onrender.com";
 
@@ -264,9 +262,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const values = {
-    AdminData,
-    UserData,
-    TaskData,
     currentUser,
     showProfileDropDown,
     isSignInPage,

@@ -184,10 +184,10 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                                 onChange={(e) => handleTaskStateAndAssignedTo(e)}
                                 className="block w-full px-4 py-2 rounded-md text-gray-700 focus:outline-none focus:ring-0 border-2 focus:border-black"
                             >
-                                <option value="Todos">Todos</option>
+                                <option value="Todo">To Do</option>
                                 <option value="InProgress">In Progress</option>
-                                <option value="Done">Done</option>
-                                <option value="Failed">Failed</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Canceled">Canceled</option>
                             </select>
                         </div>
 

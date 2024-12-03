@@ -3,7 +3,7 @@ import Taskcard from './Taskcard';
 import { useAuthContext } from '../../../contexts/AuthContext';
 
 const Taskboard = () => {
-    const { currentUser, allTasks, editTaskFromApiCall, updateTask } = useAuthContext();
+    const { currentUser, allTasks, editTaskFromApiCall } = useAuthContext();
 
     const [draggedTask, setDraggedTask] = useState(null);
     const [draggedTaskId, setDraggedTaskId] = useState(null); // Track dragged task's ID
@@ -11,10 +11,10 @@ const Taskboard = () => {
     const [currentUserTasks, setCurrentUserTasks] = useState([]);
 
     const columnNames = {
-        Todos: 'To Do',
+        Todo: 'To Do',
         InProgress: 'In Progress',
-        Done: 'Completed',
-        Failed: 'Failed',
+        Completed: 'Completed',
+        Canceled: 'Canceled',
     };
 
     const handleDragStart = (task) => {
@@ -33,10 +33,6 @@ const Taskboard = () => {
     const handleDragLeave = () => {
         // setHoveredColumn(null);  
     };
-
-    // useEffect(() => {
-    //     console.log(hoveredColumn)
-    // }, [hoveredColumn])
 
     const handleDrop = (columnId) => {
         if (draggedTask && draggedTask.state !== columnId) {
@@ -60,7 +56,7 @@ const Taskboard = () => {
     }, [allTasks, currentUser]);
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 text-black w-full ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 text-black w-full">
             {Object.entries(columnNames).map(([columnId, columnName]) => (
                 <div
                     key={columnId}

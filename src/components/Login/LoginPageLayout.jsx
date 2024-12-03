@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Loginform from "./Loginform";
-import Signupform from "./Signupform";
 import { useAuthContext } from "../../contexts/AuthContext";
 
 function LoginPageLayout() {

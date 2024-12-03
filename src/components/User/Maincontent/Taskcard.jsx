@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import TaskModal from './TaskModal/TaskModal'; // Import the TaskModal component
+import { useTrelloContext } from '../../../contexts/TrelloContext';
 
 const Taskcard = ({ task, onDragStart, isDragging }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { statusColors } = useTrelloContext()
 
     const isOverdue = new Date(task.dueDate) < new Date(); // Check if the due date is in the past
 
@@ -25,14 +27,7 @@ const Taskcard = ({ task, onDragStart, isDragging }) => {
                     </h3>
                     {/* Task Status */}
                     <span
-                        className={`text-xs font-medium px-2 py-1 rounded-full ${task.state === 'Todos'
-                            ? 'bg-blue-500'
-                            : task.state === 'InProgress'
-                                ? 'bg-yellow-400'
-                                : task.state === 'Done'
-                                    ? 'bg-green-500'
-                                    : 'bg-red-500'
-                            } text-white`}
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${statusColors[task.state].taskbg} text-white`}
                     >
                         {task.state}
                     </span>

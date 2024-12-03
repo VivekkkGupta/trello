@@ -1,14 +1,10 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { AdminData, UserData } from "../data/AuthData";
-import TaskData from "../data/TaskData";
 
 export const TrelloContext = createContext(null);
 
 export const useTrelloContext = () => useContext(TrelloContext);
 
 export const TrelloProvider = ({ children }) => {
-  // Initialize TaskData state from imported data
-  const [TaskDataState, setTaskDataState] = useState(TaskData);
 
   // Sidebar and color panel state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -40,21 +36,25 @@ export const TrelloProvider = ({ children }) => {
 
   // Define colors for different statuses
   const statusColors = {
-    'Completed': {
-      border: 'border-green-500',
-      bg: 'bg-green-300',
+    'Todo': {
+      border: 'border-blue-500',
+      bg: 'bg-blue-300',
+      taskbg: 'bg-blue-500',
     },
     'InProgress': {
       border: 'border-yellow-500',
       bg: 'bg-yellow-300',
+      taskbg: 'bg-yellow-500',
     },
-    'Todos': {
-      border: 'border-blue-500',
-      bg: 'bg-blue-300',
+    'Completed': {
+      border: 'border-green-500',
+      bg: 'bg-green-300',
+      taskbg: 'bg-green-500',
     },
-    'Failed': {
+    'Canceled': {
       border: 'border-red-500',
       bg: 'bg-red-300',
+      taskbg: 'bg-red-500',
     },
   };
 

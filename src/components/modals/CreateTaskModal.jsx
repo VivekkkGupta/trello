@@ -12,7 +12,7 @@ function CreateTaskModal({ show, onClose }) {
         createdDate: '',
         dueStatus: {},
         assignedTo: 'unassigned',
-        state: 'Todos',
+        state: 'Todo',
         assignedToObj: {},
     });
 
