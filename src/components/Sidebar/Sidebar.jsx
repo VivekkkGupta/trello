@@ -40,6 +40,15 @@ function Sidebar() {
                         </div>
                     </div> */}
 
+                    <div className='bg-gray-200 w-full px-6 py-3 border-b-[1px] border-black border-opacity-40'>
+                        <div className=''>
+                            <div className='px-3 py-2 hover:bg-gray-300 cursor-pointer rounded-md  flex items-center gap-2'><i class="ri-home-4-fill text-lg"></i>Home</div>
+                            <div className='px-3 py-2 hover:bg-gray-300 cursor-pointer rounded-md  flex items-center gap-2'><i class="ri-kanban-view-2 text-lg"></i>Board</div>
+                            <div className='px-3 py-2 hover:bg-gray-300 cursor-pointer rounded-md  flex items-center gap-2'><i class="ri-bar-chart-box-fill text-lg"></i>Reports</div>
+                            <div className='px-3 py-2 hover:bg-gray-300 cursor-pointer rounded-md  flex items-center gap-2'><i class="ri-settings-4-fill text-lg"></i>Settings</div>
+                        </div>
+                    </div>
+
                     <div className='w-full flex items-center flex-col'>
                         <div className='w-full flex items-center gap-2 font-[400] p-3'>
                             Choose Background

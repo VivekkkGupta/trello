@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAuthContext } from "../../../../contexts/AuthContext";
 import default_avatar from "../../../../assets/images/default_avatar.jpg";
+import { useTrelloContext } from "../../../../contexts/TrelloContext";
 
 const TaskModal = ({ taskfromparent, onClose }) => {
     const { formatTimestamp, usersList, currentUser, editTaskFromApiCall, fetchTasksData } = useAuthContext();
+
 
     const [currentTaskInView, setCurrentTaskInView] = useState(taskfromparent);
     const [newNote, setNewNote] = useState("");

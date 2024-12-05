@@ -11,7 +11,7 @@ function Navbar() {
     };
 
     return (
-        <div className='h-[3.5rem]  bg-gray-200 border-b-[2px] border-opacity-40 border-black text-black'>
+        <div className='h-[3.5rem]  bg-gray-100 border-b-[2px] border-opacity-40 border-black text-black'>
             <div className='innerdiv flex h-full w-full items-center justify-between px-10'>
                 <div className='leftitems flex gap-[4rem] items-center'>
 
@@ -38,7 +38,7 @@ function Navbar() {
                 </div>
                 <div className='flex items-center'>
                     <div className="rightitems flex items-center justify-center w-10 h-10 rounded-full">
-                        <i className="ri-information-line text-xl cursor-pointer"></i>
+                        {/* <i className="ri-information-line text-xl cursor-pointer"></i> */}
                     </div>
                     <div
                         className="relative rightitems flex items-center justify-center w-10 h-10 rounded-full cursor-pointer"

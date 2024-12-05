@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Taskcard from './Taskcard';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { useTrelloContext } from '../../../contexts/TrelloContext';
 
 const Taskboard = () => {
     const { currentUser, allTasks, editTaskFromApiCall } = useAuthContext();
+    const { statusColors } = useTrelloContext()
 
     const [draggedTask, setDraggedTask] = useState(null);
     const [draggedTaskId, setDraggedTaskId] = useState(null); // Track dragged task's ID
@@ -64,9 +66,9 @@ const Taskboard = () => {
             setPendingUpdate({ updatedTask, noteText });
             setCommentBox(true);
         }
-        // setHoveredColumn(null);
-        // setDraggedTask(null);
-        // setDraggedTaskId(null); // Reset dragged task ID
+        setHoveredColumn(null);
+        setDraggedTask(null);
+        setDraggedTaskId(null); // Reset dragged task ID
     };
 
     const handleCancelUpdate = () => {
@@ -137,19 +139,20 @@ const Taskboard = () => {
     }, [allTasks, currentUser]);
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 text-black w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 text-black w-full ">
             {Object.entries(columnNames).map(([columnId, columnName]) => (
                 <div
                     key={columnId}
-                    className={`bg-gray-100 rounded-lg p-4 shadow-md h-fit 
+                    className={`bg-gray-100 rounded-lg p-4 shadow-md h-fit max-h-full group 
                         overflow-y-auto ${hoveredColumn === columnId ? 'border-2 border-dashed border-black' : ''} 
-                        hover:scrollbar-visible scrollbar-hidden`}
+                        hover:scrollbar-visible hover:custom-scrollbar scrollbar-hidden`}
                     onDragEnter={() => handleDragEnter(columnId)}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={() => handleDrop(columnId)}
                 >
-                    <h2 className="text-lg font-semibold mb-3 text-center tracking-wide">{columnName}</h2>
+
+                    <h2 className={`text-lg font-semibold mb-3 text-center tracking-wide border-b-2 sticky -top-4 bg-gray-100 ${statusColors[columnId].border}`}>{columnName}</h2>
                     <div className="space-y-4">
                         {currentUserTasks.filter((task) => task.state === columnId).length > 0 ? (
                             currentUserTasks
