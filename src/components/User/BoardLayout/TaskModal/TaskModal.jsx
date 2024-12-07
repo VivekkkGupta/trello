@@ -124,100 +124,90 @@ const TaskModal = ({ taskfromparent, onClose }) => {
         <div className="fixed inset-0 -top-4 backdrop-blur-sm z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
             <div className="bg-white rounded-lg p-6 w-full max-w-5xl shadow-lg tracking-wide flex" onClick={(e) => e.stopPropagation()}>
                 {/* Left Section */}
-                <div className="flex-1 pr-4 mr-2 border-r border-gray-300 bg-gray-50 p-6 rounded-lg shadow-sm">
+                <div className="max-h-[70vh] overflow-y-scroll custom-scrollbar flex-1 p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 space-y-6">
                     {/* Task Header */}
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-sm font-semibold text-gray-500 tracking-wide">
-                            Task ID: <span className="text-gray-700"># {currentTaskInView._id}</span>
-                        </h2>
+                    <div className="border-b pb-4">
+
+                        <p className="text-sm text-gray-500">
+                            Task ID: <span className="text-gray-800 font-medium"># {currentTaskInView._id}</span>
+                        </p>
                     </div>
 
                     {/* Task Details */}
                     <div>
-                        {/* Title */}
-                        <h3 className="text-2xl font-bold text-gray-800">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
                             {currentTaskInView.title}
                         </h3>
-
-                        {/* Description */}
-                        <p className="mt-2 text-md text-gray-600">
-                            <span className="font-semibold text-gray-700">Description:</span> {currentTaskInView.description}
+                        <p className="text-gray-700 leading-6">
+                            <span className="font-semibold">Description:</span> {currentTaskInView.description || "No description provided."}
                         </p>
-
-                        {/* Date Details */}
-                        <div className="mt-6 text-sm">
-                            <div className="flex flex-col space-y-1">
-                                <p className="text-gray-500">
-                                    <span className="font-medium text-gray-700">Created On:</span>{" "}
-                                    {new Date(currentTaskInView.createdDate).toLocaleDateString('en-GB')},
-                                    {new Date(currentTaskInView.createdDate).toLocaleTimeString()}
-                                </p>
-                                <p className="text-gray-500">
-                                    <span className="font-medium text-gray-700">Due Date:</span>{" "}
-                                    {new Date(currentTaskInView.createdDate).toLocaleDateString('en-GB')},
-                                    {new Date(currentTaskInView.createdDate).toLocaleTimeString()}
-                                </p>
-                            </div>
-
-                            <p
-                                className={`mt-3 text-sm font-semibold ${new Date() > new Date(currentTaskInView.dueDate)
-                                    ? "text-red-600"
-                                    : "text-green-600"
-                                    }`}
-                            >
-                                {new Date() > new Date(currentTaskInView.dueDate)
-                                    ? "Overdue"
-                                    : "On Track"}
-                            </p>
-                        </div>
-
-                        {/* State Dropdown */}
-                        <div className="mt-6">
-                            <label
-                                className="block text-sm font-medium text-gray-700 mb-2"
-                                htmlFor="state"
-                            >
-                                State:
-                            </label>
-                            <select
-                                id="state"
-                                name="state"
-                                value={currentTaskInView.state}
-                                onChange={(e) => handleTaskStateAndAssignedTo(e)}
-                                className="block w-full px-4 py-2 rounded-md text-gray-700 focus:outline-none focus:ring-0 border-2 focus:border-black"
-                            >
-                                <option value="Todo">To Do</option>
-                                <option value="InProgress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Canceled">Canceled</option>
-                            </select>
-                        </div>
-
-                        {/* Assignee Dropdown */}
-                        <div className="mt-6">
-                            <label
-                                className="block text-sm font-medium text-gray-700 mb-2"
-                                htmlFor="assignedTo"
-                            >
-                                Assign To:
-                            </label>
-                            <select
-                                id="assignedTo"
-                                name="assignedTo"
-                                value={currentTaskInView.assignedTo?._id || ""}
-                                onChange={(e) => handleTaskStateAndAssignedTo(e)}
-                                className="block w-full px-4 py-2 rounded-md text-gray-700 focus:outline-none focus:ring-0 border-2 focus:border-black"
-                            >
-                                {usersList &&
-                                    usersList.map((user) => (
-                                        <option key={user._id} value={user._id}>
-                                            {user.username}
-                                        </option>
-                                    ))}
-                            </select>
-                        </div>
                     </div>
+
+                    {/* Dates and Status */}
+                    <div className="bg-white p-4 rounded-md shadow-sm border border-gray-200 space-y-2">
+                        <p className="text-gray-600">
+                            <span className="font-medium text-gray-800">Created On:</span>{" "}
+                            {new Date(currentTaskInView.createdDate).toLocaleDateString('en-GB')}{" "}
+                            at {new Date(currentTaskInView.createdDate).toLocaleTimeString()}
+                        </p>
+                        <p className="text-gray-600">
+                            <span className="font-medium text-gray-800">Due Date:</span>{" "}
+                            {new Date(currentTaskInView.dueDate).toLocaleDateString('en-GB')}{" "}
+                            at {new Date(currentTaskInView.dueDate).toLocaleTimeString()}
+                        </p>
+                        <p
+                            className={`font-semibold text-sm ${new Date() > new Date(currentTaskInView.dueDate)
+                                ? "text-red-600"
+                                : "text-green-600"
+                                }`}
+                        >
+                            {new Date() > new Date(currentTaskInView.dueDate)
+                                ? "This task is overdue."
+                                : "This task is on track."}
+                        </p>
+                    </div>
+
+                    {/* State Dropdown */}
+                    <div className="bg-white px-4 py-1 rounded-md shadow-sm border border-gray-200 flex items-center gap-4">
+                        <label htmlFor="state" className="text-sm font-medium text-gray-800 w-1/3">
+                            Current State:
+                        </label>
+                        <select
+                            id="state"
+                            name="state"
+                            value={currentTaskInView.state}
+                            onChange={(e) => handleTaskStateAndAssignedTo(e)}
+                            className="block px-4 py-2 rounded-md border-gray-300 text-gray-700 focus:ring focus:ring-indigo-200 w-fit"
+                        >
+                            <option value="Todo">To Do</option>
+                            <option value="InProgress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Canceled">Canceled</option>
+                        </select>
+                    </div>
+
+                    {/* Assignee Dropdown */}
+                    <div className="bg-white px-4 py-1 rounded-md shadow-sm border border-gray-200 flex items-center gap-4">
+                        <label htmlFor="assignedTo" className="text-sm font-medium text-gray-800 w-1/3">
+                            Assign To:
+                        </label>
+                        <select
+                            id="assignedTo"
+                            name="assignedTo"
+                            value={currentTaskInView.assignedTo?._id || ""}
+                            onChange={(e) => handleTaskStateAndAssignedTo(e)}
+                            className="block px-4 py-2 rounded-md border-gray-300 text-gray-700 focus:ring focus:ring-indigo-200  w-fit"
+                        >
+                            {usersList && usersList.map((user) => (
+                                <option key={user._id} value={user._id}>
+                                    {user.username}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                 </div>
+
 
                 {/* Confirmation Modal */}
                 {isCommentBox && (
@@ -252,9 +242,9 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                 )}
 
                 {/* Right Section */}
-                <div className="flex-1 pl-4">
+                <div className="flex-1 pl-4 max-h-[70vh]">
                     {/* Add Comment Section */}
-                    <div className="mb-4">
+                    <div className="mb-4 h-fit">
                         <div className="flex justify-between">
                             <h3 className="text-lg font-semibold text-gray-800">Add Comment:</h3>
                             <button
@@ -282,7 +272,7 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                     </div>
 
                     {/* Notes Section */}
-                    <div>
+                    <div className="flex flex-col">
                         <div className="flex items-center justify-between border-b border-gray-300 mb-2">
                             <h3 className="text-lg font-semibold text-gray-800">Activities</h3>
                             <h4
@@ -292,7 +282,8 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                                 {isShowDetails ? "Hide Details" : "Show Details"}
                             </h4>
                         </div>
-                        <ul className="space-y-4 text-sm overflow-y-auto h-64 mt-2 custom-scrollbar pr-2">
+                        <ul className="space-y-4 text-sm overflow-y-auto max-h-[50vh] mt-2 custom-scrollbar pr-2"
+                        >
                             {currentTaskInView.notes
                                 .slice()
                                 .reverse()
@@ -347,6 +338,7 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                                     <p className="text-gray-500 text-center">No comments yet</p>
                                 )}
                         </ul>
+
                     </div>
 
 

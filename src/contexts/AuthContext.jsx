@@ -112,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("LocalAuthData");
     setCurrentUser(null);
     setShowProfileDropDown(false);
+    setAllTasks(null)
   };
 
   // Task-related API calls
