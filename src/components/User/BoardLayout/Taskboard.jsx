@@ -19,7 +19,7 @@ const Taskboard = () => {
         Todo: 'To Do',
         InProgress: 'In Progress',
         Completed: 'Completed',
-        Canceled: 'Canceled',
+        Cancelled: 'Cancelled',
     };
 
     const addNote = (myTask, text, isComment = false) => {

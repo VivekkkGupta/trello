@@ -7,6 +7,7 @@ import { useAuthContext } from "./contexts/AuthContext";
 import HomeLayout from "./components/User/HomeLayout/HomeLayout";
 import BoardLayout from "./components/User/BoardLayout/BoardLayout";
 import ReportsLayout from "./components/User/ReportsLayout/ReportsLayout";
+import SettingsLayout from "./components/User/SettingsLayout/SettingsLayout";
 
 function App() {
   const { currentUser } = useAuthContext();
@@ -66,6 +67,16 @@ function App() {
               <ProtectedRoute>
                 <UserLayout>
                   <ReportsLayout />
+                </UserLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <UserLayout>
+                  <SettingsLayout />
                 </UserLayout>
               </ProtectedRoute>
             }

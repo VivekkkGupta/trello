@@ -41,14 +41,14 @@ function Navbar() {
                     </div>
 
                     {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-6">
+                    {/* <div className="hidden md:flex items-center gap-6">
                         <div className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-800 rounded-lg cursor-pointer transition-all duration-300">
                             Workspaces <i className="ri-arrow-drop-down-line"></i>
                         </div>
                         <div className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-800 rounded-lg cursor-pointer transition-all duration-300">
                             Starred <i className="ri-arrow-drop-down-line"></i>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Right Section */}

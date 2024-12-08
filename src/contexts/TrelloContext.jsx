@@ -51,7 +51,7 @@ export const TrelloProvider = ({ children }) => {
       bg: 'bg-green-300',
       taskbg: 'bg-green-500',
     },
-    'Canceled': {
+    'Cancelled': {
       border: 'border-red-500',
       bg: 'bg-red-300',
       taskbg: 'bg-red-500',

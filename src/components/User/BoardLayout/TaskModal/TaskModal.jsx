@@ -182,7 +182,7 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                             <option value="Todo">To Do</option>
                             <option value="InProgress">In Progress</option>
                             <option value="Completed">Completed</option>
-                            <option value="Canceled">Canceled</option>
+                            <option value="Cancelled">Cancelled</option>
                         </select>
                     </div>
 
