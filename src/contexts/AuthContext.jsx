@@ -14,10 +14,9 @@ export const AuthProvider = ({ children }) => {
 
   // Authentication state and functions
   const [currentUser, setCurrentUser] = useState(getLocalAuthData());
+  const [currentUserTasks, setCurrentUserTasks] = useState([]);
   const [showProfileDropDown, setShowProfileDropDown] = useState(false);
-  const [isSignInPage, setIsSignInPage] = useState(true)
-  const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "", confirmPassword: "" });
-  const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "", confirmPassword: "" });
+
 
   // Admin dashboard task management state
   const [currentTask, setCurrentTask] = useState(null);
@@ -38,7 +37,13 @@ export const AuthProvider = ({ children }) => {
       hour12: true,
     });
 
-  // Validation
+
+  // State of Login
+  const [isSignInPage, setIsSignInPage] = useState(true)
+  const [userInputData, setUserInputData] = useState({ username: "", email: "", password: "", confirmPassword: "" });
+  const [userInputErrors, setUserInputErrors] = useState({ username: "", email: "", password: "", confirmPassword: "" });
+
+  // Validation Helper Function
   const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
   const checkAndSetErrors = (inputData) => {
     const errors = {};
@@ -57,62 +62,83 @@ export const AuthProvider = ({ children }) => {
   const handleInputBox = (e) => setUserInputData({ ...userInputData, [e.target.name]: e.target.value });
   const handleSignInAndSignUpButton = () => setIsSignInPage((prev) => !prev);
 
-  // Authentication actions
-  const handleSignUpClick = async () => {
-    const errors = checkAndSetErrors(userInputData);
-    if (Object.keys(errors).length > 0) return setUserInputErrors(errors);
-
-
-  };
-
+  // Main Logic Behind LoginButton 
   const handleLoginButton = async () => {
+    // Check for errors and save in errors variable
     const errors = checkAndSetErrors(userInputData);
+
+    // if it has errors then setUserInputErrors and close the function
     if (Object.keys(errors).length > 0) return setUserInputErrors(errors);
 
     if (isSignInPage) {
-      try {
-        const response = await axios.post(`${BASE_URL}/userapi/login`, userInputData);
-        if (response.data.message === "Login successful") {
-          setLocalAuthData(response.data.user);
-          setCurrentUser(response.data.user);
-          setUserInputData({ email: "", password: "", confirmPassword: "" });
-        } else {
-          setUserInputErrors({ ...userInputErrors, password: response.data.error });
-        }
-      } catch (error) {
-        setUserInputErrors({
-          ...userInputErrors,
-          password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again.",
-        });
-      }
+      await handleLogin()
     }
     else {
-      try {
-        const res = await axios.post(`${BASE_URL}/userapi/createuser`, userInputData);
-        if (res.data.error) {
-          setUserInputErrors({ ...userInputErrors, email: res.data.error });
-        }
-        else {
-          alert("User Created Successfully");
-          setUserInputData({ email: "", password: "", confirmPassword: "" });
-          setUserInputErrors({ email: "", password: "", confirmPassword: "" });
-          setIsSignInPage(true)
-        }
-      } catch (error) {
-        alert(
-          error.response?.status === 409
-            ? "This email ID is already registered. Please use a different email."
-            : "An unexpected error occurred. Please try again."
-        );
+      await handleSignUp()
+    };
+  }
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}/userapi/login`, userInputData);
+      if (response.data.message === "Login successful") {
+
+        // set Local Storage data for current user
+        // response has data key which has an object of user
+        setLocalAuthData(response.data.user);
+        setCurrentUser(response.data.user);
+
+        // flush the input fields
+        setUserInputData({ email: "", password: "", confirmPassword: "" });
+
+        // Fetch fresh data for the logged-in user
+        await fetchUsersData();
+        await fetchTasksData();
+
+      } else {
+        setUserInputErrors({ ...userInputErrors, password: response.data.error });
       }
+    } catch (error) {
+      setUserInputErrors({
+        ...userInputErrors,
+        password: error.response?.status === 401 ? "Invalid Credentials" : "An error occurred. Please try again.",
+      });
     }
-  };
+  }
+
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(`${BASE_URL}/userapi/createuser`, userInputData);
+      if (res.data.error) {
+        setUserInputErrors({ ...userInputErrors, email: res.data.error });
+      }
+      else {
+        alert("User Created Successfully");
+        setUserInputData({ email: "", password: "", confirmPassword: "" });
+        setUserInputErrors({ email: "", password: "", confirmPassword: "" });
+        setIsSignInPage(true)
+      }
+    } catch (error) {
+      alert(
+        error.response?.status === 409
+          ? "This email ID is already registered. Please use a different email."
+          : "An unexpected error occurred. Please try again."
+      );
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("LocalAuthData");
     setCurrentUser(null);
     setShowProfileDropDown(false);
-    setAllTasks(null)
+
+    // Clear state
+    setAllTasks([]);
+    setFilteredTasks([]);
+    setCurrentUserTasks([])
+    setCurrentTask("");
+    setNewComment("");
+    setUserInputErrors({})
   };
 
   // Task-related API calls
@@ -245,12 +271,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Data fetching on mount
-  useEffect(() => {
-    fetchUsersData();
-    fetchTasksData();
-  }, []);
-
   const fetchUsersData = async () => {
     const users = await getAllUsersApiCall();
     setUsersList(users);
@@ -259,8 +279,54 @@ export const AuthProvider = ({ children }) => {
   const fetchTasksData = async () => {
     const tasks = await getAllTasksApiCall();
     setAllTasks(tasks);
-    setFilteredTasks(tasks);
+    // setFilteredTasks(tasks);
+
+    setCurrentUserTasks(
+      tasks
+        .filter((task) => task.assignedTo && task.assignedTo._id === currentUser._id)
+        .map((task) => ({
+          ...task,
+          notes: task.notes || [], // Ensure notes is always an array
+        }))
+    );
   };
+
+  // const getCurrentUserTasks = async () => {
+  //   if (Array.isArray(allTasks) && currentUser?._id) {
+  //     setCurrentUserTasks(
+  //       allTasks
+  //         .filter((task) => task.assignedTo && task.assignedTo._id === currentUser._id)
+  //         .map((task) => ({
+  //           ...task,
+  //           notes: task.notes || [], // Ensure notes is always an array
+  //         }))
+  //     );
+  //   }
+  // }
+
+  async function fetchInitialData() {
+    if (getLocalAuthData()) {
+      if (usersList || allTasks) {
+        // console.log("Fetching data");
+        await fetchUsersData(); // Sets currentUser
+        await fetchTasksData(); // Sets allTasks and filteredTasks
+      }
+    } else {
+      // console.log("No auth data, flushing variables");
+      setUsersList([]);
+      setCurrentUserTasks([])
+      setAllTasks([]);
+      setFilteredTasks([]);
+    }
+  }
+
+  // useEffect(() => {
+  //   console.log(currentUserTasks)
+  // }, [currentUserTasks])
+
+  useEffect(() => {
+    fetchInitialData();
+  }, [])
 
   const values = {
     currentUser,
@@ -273,12 +339,14 @@ export const AuthProvider = ({ children }) => {
     filteredTasks,
     currentTask,
     newComment,
+    currentUserTasks,
+    setCurrentUserTasks,
+    fetchInitialData,
     getLocalAuthData,
     setShowProfileDropDown,
     setNewComment,
     setFilteredTasks,
     handleSignInAndSignUpButton,
-    handleSignUpClick,
     handleLoginButton,
     handleLogout,
     handleInputBox,

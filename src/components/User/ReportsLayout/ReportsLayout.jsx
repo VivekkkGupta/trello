@@ -5,24 +5,18 @@ import * as XLSX from "xlsx";
 import { useAuthContext } from "../../../contexts/AuthContext";
 
 function ReportsLayout() {
-    const { allTasks } = useAuthContext(); // Fetching tasks dynamically from the context
-    const [taskData, setTaskData] = useState([]);
-
-    useEffect(() => {
-        // Assuming that allTasks is available from context
-        if (Array.isArray(allTasks)) {
-            setTaskData(allTasks);
-        }
-    }, [allTasks]); // Re-run when allTasks changes
+    const { allTasks, currentUserTasks, currentUser } = useAuthContext(); // Fetching tasks dynamically from the context
+    const [taskData, setTaskData] = useState(currentUser.role === "admin" ? allTasks : currentUserTasks);
 
     // Handle downloading as Excel
     const downloadExcel = () => {
-        const formattedData = taskData.map((task) => ({
+        const formattedData = taskData.map((task, index) => ({
+            Serial: index + 1, // Serial number
             _id: task._id,
             title: task.title,
             description: task.description,
             state: task.state,
-            assignedTo: task.assignedTo ? task.assignedTo.username : 'N/A', // Extracting 'username' from 'assignedTo' object
+            assignedTo: task.assignedTo ? task.assignedTo.username : "N/A", // Extracting 'username' from 'assignedTo' object
             createdDate: new Date(task.createdDate).toLocaleString(),
             dueDate: new Date(task.dueDate).toLocaleString(),
             overdue: task.overdue ? "Yes" : "No",
@@ -39,19 +33,22 @@ function ReportsLayout() {
         const doc = new jsPDF();
         doc.text("Task Report", 20, 20);
 
-        // Creating a table structure
-        const tableData = taskData.map((task) => [
+        // Creating a table structure with serial number
+        const tableData = taskData.map((task, index) => [
+            index + 1, // Serial number
             task._id,
             task.title,
             task.description,
             task.state,
-            task.assignedTo.username,
+            task.assignedTo ? task.assignedTo.username : "N/A", // Extracting 'username'
             new Date(task.createdDate).toLocaleString(),
             new Date(task.dueDate).toLocaleString(),
         ]);
 
         doc.autoTable({
-            head: [["ID", "Title", "Description", "Status", "Assigned To", "Created Date", "Due Date"]],
+            head: [
+                ["S. No.", "ID", "Title", "Description", "Status", "Assigned To", "Created Date", "Due Date"]
+            ],
             body: tableData,
             startY: 30,
         });
@@ -62,7 +59,7 @@ function ReportsLayout() {
     return (
         <div className="p-4 w-full h-full">
             <div className="relative bg-gray-100 p-8 shadow-lg rounded-lg w-full h-full">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-center mb-6 h-[10%]">
                     <h2 className="text-2xl font-semibold text-gray-800">Task Reports</h2>
                     <div className="flex space-x-4">
                         <button
@@ -80,11 +77,12 @@ function ReportsLayout() {
                     </div>
                 </div>
 
-                {/* Table displaying task data */}
-                <div className="overflow-x-auto bg-white shadow-lg rounded-lg p-4 max-h-full">
-                    <table className="min-w-full table-auto">
-                        <thead className="bg-gray-100">
+                {/* Responsive Table */}
+                <div className="bg-white shadow-lg rounded-lg w-full h-[85%] overflow-auto custom-scrollbar">
+                    <table className="w-full border-collapse">
+                        <thead className="bg-gray-300 sticky top-0 z-10">
                             <tr>
+                                <th className="px-6 py-3 border-b text-left text-sm font-semibold text-gray-600">S.No.</th>
                                 <th className="px-6 py-3 border-b text-left text-sm font-semibold text-gray-600">ID</th>
                                 <th className="px-6 py-3 border-b text-left text-sm font-semibold text-gray-600">Title</th>
                                 <th className="px-6 py-3 border-b text-left text-sm font-semibold text-gray-600">Description</th>
@@ -94,28 +92,27 @@ function ReportsLayout() {
                                 <th className="px-6 py-3 border-b text-left text-sm font-semibold text-gray-600">Due Date</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            {taskData.map((task, index) => (
+                                <tr key={task._id} className="hover:bg-gray-50 transition duration-200 ">
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">{index + 1}</td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">{task._id}</td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">{task.title}</td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">{task.description}</td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">{task.state}</td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">
+                                        {task.assignedTo ? task.assignedTo.username : "N/A"}
+                                    </td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">
+                                        {new Date(task.createdDate).toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 border-b text-sm text-gray-700">
+                                        {new Date(task.dueDate).toLocaleString()}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
-                    <div className="overflow-y-auto custom-scrollbar max-h-96">
-                        <table className="min-w-full table-auto">
-                            <tbody>
-                                {taskData.map((task) => (
-                                    <tr key={task._id} className="hover:bg-gray-50 transition duration-200">
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">{task._id}</td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">{task.title}</td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">{task.description}</td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">{task.state}</td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">{task.assignedTo.username}</td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">
-                                            {new Date(task.createdDate).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 border-b text-sm text-gray-700">
-                                            {new Date(task.dueDate).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>

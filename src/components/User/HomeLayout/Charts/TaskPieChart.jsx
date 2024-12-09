@@ -6,13 +6,11 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import { useAuthContext } from "../../../../contexts/AuthContext";
 
 // Register necessary Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function TaskPieChart() {
-    const { allTasks } = useAuthContext();
+function TaskPieChart({ allTasks, currentUserTasks }) {
 
     // Count tasks by state
     const taskCounts = {
@@ -22,7 +20,7 @@ function TaskPieChart() {
         "Cancelled": 0,
     };
 
-    allTasks.forEach((task) => {
+    currentUserTasks.forEach((task) => {
         if (taskCounts[task.state] !== undefined) {
             taskCounts[task.state]++;
         }

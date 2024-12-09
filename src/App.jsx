@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPageLayout from "./components/Login/LoginPageLayout";
 import UserLayout from "./components/User/UserLayout";
@@ -10,12 +10,13 @@ import ReportsLayout from "./components/User/ReportsLayout/ReportsLayout";
 import SettingsLayout from "./components/User/SettingsLayout/SettingsLayout";
 
 function App() {
-  const { currentUser, getLocalAuthData,updateTask } = useAuthContext();
+  const { currentUser, fetchInitialData } = useAuthContext();
 
   useEffect(() => {
-    getLocalAuthData()
-    updateTask()
-  }, [currentUser])
+    if (currentUser) {
+      fetchInitialData();
+    }
+  }, [currentUser]); // Added isDataFetched to avoid infinite re-renders
 
   // Protected route component
   const ProtectedRoute = ({ children, role }) => {
@@ -23,39 +24,28 @@ function App() {
       return <Navigate to="/" replace />;
     }
     if (role && currentUser.role !== role) {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/home" replace />;
     }
     return children;
   };
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true }}>
       <div className="relative h-screen w-full font-roboto">
         <Routes>
           {/* Public Route */}
           <Route path="/" element={!currentUser ? <LoginPageLayout /> : <Navigate to="/home" replace />} />
 
-          {/* Admin Protected Route */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <Admindashboard />
-              </ProtectedRoute>
-            }
-          />
-
           {/* User Protected Routes */}
           <Route
             path="/home"
             element={
-              <ProtectedRoute>
-                <UserLayout>
-                  <HomeLayout />
-                </UserLayout>
-              </ProtectedRoute>
+              <UserLayout>
+                {!currentUser ? <Navigate to="/" replace /> : currentUser.role === "admin" ? <HomeLayout /> : <HomeLayout />}
+              </UserLayout>
             }
           />
+
           <Route
             path="/board"
             element={
@@ -66,6 +56,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/reports"
             element={
@@ -76,6 +67,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/settings"
             element={

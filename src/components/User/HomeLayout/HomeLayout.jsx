@@ -4,6 +4,9 @@ import TaskPieChart from "./Charts/TaskPieChart";
 import { useAuthContext } from "../../../contexts/AuthContext";
 
 function HomeLayout() {
+
+    const { currentUserTasks = [], allTasks, currentUser } = useAuthContext()
+
     return (
         <>
             <div className="p-4 h-full w-full overflow-y-auto">
@@ -11,22 +14,21 @@ function HomeLayout() {
                     <div className="flex flex-col gap-4 h-full w-full">
                         <div className="flex h-1/2 w-full gap-4 overflow-hidden">
                             <div className="flex-1">
-                                <ShowTaskCount />
+                                <ShowTaskCount currentUserTasks={currentUser.role === 'admin' ? allTasks : currentUserTasks} />
                             </div>
                         </div>
                         <div className="flex h-1/2 w-full gap-4 overflow-hidden">
-                            <TaskBarChart />
-                            <TaskPieChart />
+                            <TaskBarChart currentUserTasks={currentUser.role === 'admin' ? allTasks : currentUserTasks} />
+                            <TaskPieChart currentUserTasks={currentUser.role === 'admin' ? allTasks : currentUserTasks} />
                         </div>
-                    </div>
+                    </div>  
                 </div>
             </div>
         </>
     );
 }
 
-function ShowTaskCount() {
-    const { allTasks } = useAuthContext();
+function ShowTaskCount({ allTasks, currentUserTasks }) {
 
     const taskCounts = {
         Todo: 0,
@@ -35,7 +37,7 @@ function ShowTaskCount() {
         Cancelled: 0,
     };
 
-    allTasks.forEach((task) => {
+    currentUserTasks.forEach((task) => {
         if (taskCounts[task.state] !== undefined) {
             taskCounts[task.state]++;
         }
@@ -50,6 +52,7 @@ function ShowTaskCount() {
         </div>
     );
 }
+
 
 function TaskCountCard({ taskState, count }) {
     const stateColors = {

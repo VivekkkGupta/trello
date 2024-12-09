@@ -4,13 +4,16 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { useTrelloContext } from '../../../contexts/TrelloContext';
 
 const Taskboard = () => {
-    const { currentUser, allTasks, editTaskFromApiCall } = useAuthContext();
+    const { currentUser, editTaskFromApiCall, currentUserTasks, setCurrentUserTasks, fetchTasksData, allTasks } = useAuthContext();
+
+    const [taskData, setTaskData] = useState(currentUser.role === "admin" ? allTasks : currentUserTasks);
+
     const { statusColors } = useTrelloContext()
 
     const [draggedTask, setDraggedTask] = useState(null);
     const [draggedTaskId, setDraggedTaskId] = useState(null); // Track dragged task's ID
     const [hoveredColumn, setHoveredColumn] = useState(null);
-    const [currentUserTasks, setCurrentUserTasks] = useState([]);
+
     const [isCommentBox, setCommentBox] = useState(false);
     const [pendingUpdate, setPendingUpdate] = useState(null); // Hold pending update data
     const [newNote, setNewNote] = useState("");
@@ -23,7 +26,6 @@ const Taskboard = () => {
     };
 
     const addNote = (myTask, text, isComment = false) => {
-        // console.log(myTask)
         const updatedTask = {
             ...myTask,
             notes: [
@@ -61,14 +63,15 @@ const Taskboard = () => {
     const handleDrop = (columnId) => {
         if (draggedTask && draggedTask.state !== columnId) {
             const updatedTask = { ...draggedTask, state: columnId };
-            let noteText = `Task state changed from ${draggedTask.state} to ${updatedTask.state}`;
+            const noteText = `Task state changed from ${draggedTask.state} to ${updatedTask.state}`;
 
+            // Add to pending updates for API persistence
             setPendingUpdate({ updatedTask, noteText });
             setCommentBox(true);
         }
         setHoveredColumn(null);
         setDraggedTask(null);
-        setDraggedTaskId(null); // Reset dragged task ID
+        setDraggedTaskId(null);
     };
 
     const handleCancelUpdate = () => {
@@ -84,7 +87,6 @@ const Taskboard = () => {
         if (pendingUpdate) {
             const { updatedTask, noteText } = pendingUpdate;
 
-            // console.log(updatedTask)
             let updatedWithComment;
             if (newNote.trim()) {
                 updatedWithComment = addNote(updatedTask, newNote.trim(), true);
@@ -94,7 +96,7 @@ const Taskboard = () => {
             const updatedWithNote = addNote(updatedWithComment, noteText);
             await editTaskFromApiCall(updatedWithNote);
 
-            setCurrentUserTasks((prevTasks) =>
+            setTaskData((prevTasks) =>
                 prevTasks.map((task) => (task._id === updatedWithNote._id ? updatedWithNote : task))
             );
 
@@ -112,7 +114,6 @@ const Taskboard = () => {
         }
     };
 
-
     const inputCommentBoxRef = useRef(null);
 
     const handleBackgroundClickOnCommentBox = (event) => {
@@ -120,23 +121,9 @@ const Taskboard = () => {
             inputCommentBoxRef.current &&
             !inputCommentBoxRef.current.contains(event.target)
         ) {
-            inputCommentBoxRef.current.focus(); // Focus the input box
-            inputCommentBoxRef.current.style.borderColor = 'red'
+            setCommentBox(false); // Close the modal
         }
     };
-
-    useEffect(() => {
-        if (Array.isArray(allTasks)) {
-            setCurrentUserTasks(
-                allTasks
-                    .filter((task) => task.assignedTo && task.assignedTo._id === currentUser._id)
-                    .map((task) => ({
-                        ...task,
-                        notes: task.notes || [], // Ensure notes is always an array
-                    }))
-            );
-        }
-    }, [allTasks, currentUser]);
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 text-black w-full ">
@@ -154,8 +141,8 @@ const Taskboard = () => {
 
                     <h2 className={`text-lg font-semibold mb-3 text-center tracking-wide border-b-2 sticky -top-4 bg-gray-100 ${statusColors[columnId].border}`}>{columnName}</h2>
                     <div className="space-y-4">
-                        {currentUserTasks.filter((task) => task.state === columnId).length > 0 ? (
-                            currentUserTasks
+                        {taskData?.length > 0 ? (
+                            taskData
                                 .filter((task) => task.state === columnId)
                                 .map((task) => (
                                     <Taskcard
@@ -168,6 +155,7 @@ const Taskboard = () => {
                         ) : (
                             <p className="bg-white shadow-lg text-gray-500 text-center hover:shadow-xl rounded-lg h-10 flex items-center justify-center">No tasks here</p>
                         )}
+
                     </div>
                 </div>
             ))}

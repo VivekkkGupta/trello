@@ -19,7 +19,7 @@ export default SettingsLayout;
 
 function SettingsTabs() {
     const { selectedColor, toggleColorPanel } = useTrelloContext();
-    const {handleLogout} = useAuthContext()
+    const { handleLogout } = useAuthContext()
 
     const [darkMode, setDarkMode] = useState(false);
 
@@ -51,10 +51,10 @@ function SettingsTabs() {
                     </div>
 
                     <div className='flex justify-between items-center cursor-pointer  hover:bg-gray-200 p-4 rounded-md transition duration-300'
-                    onClick={handleLogout}
+                        onClick={handleLogout}
                     >
                         <span className='font-medium'>Logout</span>
-                        <span className='text-2xl'><i class="ri-logout-box-r-line"></i></span>
+                        <span className='text-2xl'><i className="ri-logout-box-r-line"></i></span>
                     </div>
 
                 </div>
