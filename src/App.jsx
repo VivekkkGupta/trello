@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPageLayout from "./components/Login/LoginPageLayout";
 import UserLayout from "./components/User/UserLayout";
@@ -10,7 +10,12 @@ import ReportsLayout from "./components/User/ReportsLayout/ReportsLayout";
 import SettingsLayout from "./components/User/SettingsLayout/SettingsLayout";
 
 function App() {
-  const { currentUser } = useAuthContext();
+  const { currentUser, getLocalAuthData,updateTask } = useAuthContext();
+
+  useEffect(() => {
+    getLocalAuthData()
+    updateTask()
+  }, [currentUser])
 
   // Protected route component
   const ProtectedRoute = ({ children, role }) => {

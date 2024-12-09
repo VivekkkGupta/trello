@@ -273,6 +273,7 @@ export const AuthProvider = ({ children }) => {
     filteredTasks,
     currentTask,
     newComment,
+    getLocalAuthData,
     setShowProfileDropDown,
     setNewComment,
     setFilteredTasks,

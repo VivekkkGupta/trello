@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TaskBarChart from "./Charts/TaskBarChart";
 import TaskPieChart from "./Charts/TaskPieChart";
 import { useAuthContext } from "../../../contexts/AuthContext";

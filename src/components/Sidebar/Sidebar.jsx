@@ -91,8 +91,8 @@ function Sidebar() {
                         </div>
 
                         {/* Background Options */}
-                        <div className="w-full px-4 py-4 bg-gray-50 border-t border-gray-200 flex flex-col space-y-1">
-                            {/* <div className="font-medium text-gray-700 py-2">Choose Background</div> */}
+                        {/* <div className="w-full px-4 py-4 bg-gray-50 border-t border-gray-200 flex flex-col space-y-1">
+                            <div className="font-medium text-gray-700 py-2">Choose Background</div>
                             <div
                                 className="flex items-center gap-3 hover:bg-gray-200 px-2 py-2 rounded-md cursor-pointer transition-all duration-200"
                                 onClick={toggleColorPanel}
@@ -102,11 +102,11 @@ function Sidebar() {
                                 ></span>
                                 <span className='text-sm'>Background Colors</span>
                             </div>
-                            {/* <div className="flex items-center gap-3 hover:bg-gray-200 px-4 py-2 rounded-md cursor-pointer transition-all duration-200">
+                            <div className="flex items-center gap-3 hover:bg-gray-200 px-4 py-2 rounded-md cursor-pointer transition-all duration-200">
                                 <span className="h-6 w-6 bg-black rounded-sm"></span>
                                 <span>Images</span>
-                            </div> */}
-                        </div>
+                            </div>
+                        </div> */}
                     </>
                 )}
             </div>

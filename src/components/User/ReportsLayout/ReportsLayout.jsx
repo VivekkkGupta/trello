@@ -61,7 +61,7 @@ function ReportsLayout() {
 
     return (
         <div className="p-4 w-full h-full">
-            <div className="relative bg-white p-8 shadow-lg rounded-lg w-full h-full">
+            <div className="relative bg-gray-100 p-8 shadow-lg rounded-lg w-full h-full">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-semibold text-gray-800">Task Reports</h2>
                     <div className="flex space-x-4">
