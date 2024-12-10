@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-const DeleteTaskModal = ({handleBackgroundClickOnCommentBox}) => {
-
-
+const DeleteTaskModal = ({handleBackgroundClickOnCommentBox,handleCancelDelete,handleConfirmDelete}) => {
 
     return (
         

@@ -243,7 +243,6 @@ const TaskModal = ({ taskfromparent, onClose }) => {
 
                 </div>
 
-
                 {/* Confirmation Modal */}
                 {isCommentBox && (
                     <div className="fixed inset-0 -top-4 backdrop-blur-sm z-60 flex items-center justify-center bg-black bg-opacity-50" onClick={handleBackgroundClickOnCommentBox}>
