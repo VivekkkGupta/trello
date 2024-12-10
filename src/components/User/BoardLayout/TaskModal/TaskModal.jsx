@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAuthContext } from "../../../../contexts/AuthContext";
 import default_avatar from "../../../../assets/images/default_avatar.jpg";
 import { useTrelloContext } from "../../../../contexts/TrelloContext";
+import DeleteTaskModal from "./DeleteTaskModal"
 
 const TaskModal = ({ taskfromparent, onClose }) => {
-    const { formatTimestamp, usersList, currentUser, editTaskFromApiCall, fetchTasksData } = useAuthContext();
 
+    const { formatTimestamp, usersList, currentUser, editTaskFromApiCall, fetchTasksData } = useAuthContext();
 
     const [currentTaskInView, setCurrentTaskInView] = useState(taskfromparent);
     const [newNote, setNewNote] = useState("");
@@ -120,17 +121,51 @@ const TaskModal = ({ taskfromparent, onClose }) => {
         }
     };
 
+    const handleEditTask = (TaskToDelete) => {
+        console.log(TaskToDelete)
+
+    }
+
+    const [deleteConfirmationBox, setDeleteConfirmationBox] = useState(null)
+    const [isDeleteTaskId, setIsDeleteTaskId] = useState(null)
+
+    const handleDeleteTask = (TaskToDelete) => {
+        setIsDeleteTaskId(TaskToDelete._id)
+        setDeleteConfirmationBox(true)
+    }
+
+    const handleCancelDelete = () => {
+        setIsDeleteTaskId(null)
+        setDeleteConfirmationBox(false)
+    }
+
+    const handleConfirmDelete = () => {
+        console.log(isDeleteTaskId)
+        setIsDeleteTaskId(null)
+        setDeleteConfirmationBox(false)
+    }
+
+
     return (
         <div className="fixed inset-0 -top-4 backdrop-blur-sm z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={onClose}>
             <div className="bg-white rounded-lg p-6 w-full max-w-5xl shadow-lg tracking-wide flex" onClick={(e) => e.stopPropagation()}>
                 {/* Left Section */}
                 <div className="max-h-[70vh] overflow-y-scroll custom-scrollbar flex-1 p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 space-y-6">
                     {/* Task Header */}
-                    <div className="border-b pb-4">
-
+                    <div className="border-b pb-4 flex justify-between items-center">
                         <p className="text-sm text-gray-500">
                             Task ID: <span className="text-gray-800 font-medium"># {currentTaskInView._id}</span>
                         </p>
+
+                        <div className="space-x-2">
+                            <span className="text-gray-700 cursor-pointer text-xl" onClick={() => handleEditTask(currentTaskInView)}>
+                                <i className="ri-edit-2-fill"></i>
+                            </span>
+                            <span className="text-red-600 cursor-pointer text-xl" onClick={() => handleDeleteTask(currentTaskInView)}>
+                                <i className="ri-delete-bin-fill"></i>
+                            </span>
+                        </div>
+
                     </div>
 
                     {/* Task Details */}
@@ -240,6 +275,12 @@ const TaskModal = ({ taskfromparent, onClose }) => {
                         </div>
                     </div>
                 )}
+
+                {deleteConfirmationBox && <DeleteTaskModal
+                    handleBackgroundClickOnCommentBox={handleBackgroundClickOnCommentBox}
+                    handleCancelDelete={handleCancelDelete}
+                    handleConfirmDelete={handleConfirmDelete}
+                />}
 
                 {/* Right Section */}
                 <div className="flex-1 pl-4 max-h-[70vh]">
