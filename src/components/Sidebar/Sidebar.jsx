@@ -4,6 +4,7 @@ import ColorPanel from './ColorPanel';
 import { useAuthContext } from '../../contexts/AuthContext';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Admindashboard from '../Admin/AdminPanelLayout';
 
 function Sidebar() {
     const {
@@ -66,6 +67,16 @@ function Sidebar() {
                                     <i className="ri-home-4-fill text-lg"></i>
                                     <span>Home</span>
                                 </div>
+
+                                {/* <div
+                                    className={`flex items-center gap-3 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-md cursor-pointer transition-all duration-200 ${location.pathname === '/adminpanel' ? 'bg-gray-300' : ''}`}
+                                    onClick={() => navigate('/adminpanel')}
+                                >
+                                    <i className="ri-user-settings-fill"></i>
+                                    <span>Admin Panel</span>
+                                </div> */}
+
+
                                 <div
                                     className={`flex items-center gap-3 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-md cursor-pointer transition-all duration-200 ${location.pathname === '/board' ? 'bg-gray-300' : ''}`}
                                     onClick={() => navigate('/board')}

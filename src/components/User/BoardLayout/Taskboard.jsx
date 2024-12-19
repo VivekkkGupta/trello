@@ -4,7 +4,7 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { useTrelloContext } from '../../../contexts/TrelloContext';
 
 const Taskboard = () => {
-    const { currentUser, editTaskFromApiCall, currentUserTasks, setCurrentUserTasks, fetchTasksData, allTasks } = useAuthContext();
+    const { currentUser, editTaskFromApiCall, currentUserTasks, fetchTasksData, allTasks } = useAuthContext();
 
     const [taskData, setTaskData] = useState(currentUser.role === "admin" ? allTasks : currentUserTasks);
 
@@ -142,7 +142,7 @@ const Taskboard = () => {
                     <h2 className={`text-lg font-semibold mb-3 text-center tracking-wide border-b-2 sticky -top-4 bg-gray-100 ${statusColors[columnId].border}`}>{columnName}</h2>
                     <div className="space-y-4">
                         {taskData?.length > 0 ? (
-                            taskData
+                            taskData && taskData
                                 .filter((task) => task.state === columnId)
                                 .map((task) => (
                                     <Taskcard

@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from '../Navbar/Navbar'
 import Sidebar from '../Sidebar/Sidebar'
 import { useTrelloContext } from '../../contexts/TrelloContext';
-import Adminmaincontent from './Adminmaincontent';
-import Rightsidebar from './Rightsidebar';
+import Adminmaincontent from './AdminMainContent/Adminmaincontent';
+import Rightsidebar from './AdminRightSideBar/Rightsidebar';
 
-function Admindashboard() {
-    const { selectedColor } = useTrelloContext();
+function AdminPanelLayout() {
+
     return (
         <>
             <Adminmaincontent />
@@ -15,4 +15,4 @@ function Admindashboard() {
     )
 }
 
-export default Admindashboard
+export default AdminPanelLayout

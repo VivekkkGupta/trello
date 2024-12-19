@@ -12,10 +12,7 @@ export const TrelloProvider = ({ children }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
-  const toggleRightSidebar = () => {
-    setIsRightSidebarOpen((prev) => !prev);
-  };
+
 
   const [isColorPanelOpen, setIsColorPanelOpen] = useState(false);
   const toggleColorPanel = () => {
@@ -28,10 +25,16 @@ export const TrelloProvider = ({ children }) => {
     "bg-gradient-to-br from-[#8061C5] to-[#E073BC]";
   const [selectedColor, setSelectedColor] = useState(initialColor);
 
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+  const toggleRightSidebar = () => {
+    setIsRightSidebarOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     // Save color to localStorage whenever it changes
     localStorage.setItem("bgcolorofdashboard", selectedColor);
   }, [selectedColor]);
+
 
 
   // Define colors for different statuses
@@ -59,14 +62,15 @@ export const TrelloProvider = ({ children }) => {
   };
 
   const values = {
+    isRightSidebarOpen,
+    setIsRightSidebarOpen,
+    toggleRightSidebar,
     isSidebarOpen,
     toggleSidebar,
     isColorPanelOpen,
     toggleColorPanel,
     selectedColor,
     setSelectedColor,
-    isRightSidebarOpen,
-    toggleRightSidebar,
     statusColors
   };
 

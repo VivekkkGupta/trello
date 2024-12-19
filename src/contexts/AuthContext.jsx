@@ -1,7 +1,8 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
 
-const BASE_URL = "https://trello-backend-qm01.onrender.com";
+// const BASE_URL = "https://trello-backend-qm01.onrender.com";
+const BASE_URL = "https://trello-backend-10ku.onrender.com";
 
 export const AuthContext = createContext(null);
 export const useAuthContext = () => useContext(AuthContext);
@@ -22,7 +23,11 @@ export const AuthProvider = ({ children }) => {
   const [currentTask, setCurrentTask] = useState(null);
   const [usersList, setUsersList] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
-  const [filteredTasks, setFilteredTasks] = useState([]);
+
+  const handleCurrentTaskInAdminDashboard = (task) => {
+    setCurrentTask(task);
+  };
+
   const [newComment, setNewComment] = useState("");
 
   // Timestamp formatting
@@ -190,9 +195,7 @@ export const AuthProvider = ({ children }) => {
     setAllTasks((prevTasks) => prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task)));
 
 
-  const handleCurrentTaskInAdminDashboard = (task) => {
-    setCurrentTask(task);
-  };
+
 
   const handleUserChange = async (e) => {
     const newAssignedUserId = e.target.value;
@@ -282,7 +285,7 @@ export const AuthProvider = ({ children }) => {
     // setFilteredTasks(tasks);
 
     setCurrentUserTasks(
-      tasks
+      tasks && tasks
         .filter((task) => task.assignedTo && task.assignedTo._id === currentUser._id)
         .map((task) => ({
           ...task,
@@ -336,7 +339,6 @@ export const AuthProvider = ({ children }) => {
     userInputErrors,
     usersList,
     allTasks,
-    filteredTasks,
     currentTask,
     newComment,
     currentUserTasks,
@@ -345,7 +347,6 @@ export const AuthProvider = ({ children }) => {
     getLocalAuthData,
     setShowProfileDropDown,
     setNewComment,
-    setFilteredTasks,
     handleSignInAndSignUpButton,
     handleLoginButton,
     handleLogout,

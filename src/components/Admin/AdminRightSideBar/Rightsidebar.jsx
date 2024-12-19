@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useTrelloContext } from '../../contexts/TrelloContext';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useTrelloContext } from '../../../contexts/TrelloContext';
+import { useAuthContext } from '../../../contexts/AuthContext';
 
 function Rightsidebar() {
-    const { fetchUsersData, fetchTasksData,
-        usersList = [], allTasks = [], filteredTasks = [], setFilteredTasks, formatTimestamp, handleCurrentTaskInAdminDashboard
-    } = useAuthContext();
+    const { usersList, allTasks, handleCurrentTaskInAdminDashboard } = useAuthContext();
 
-    const { isRightSidebarOpen, toggleRightSidebar, statusColors = {} } = useTrelloContext();
+    const { statusColors, isRightSidebarOpen, toggleRightSidebar } = useTrelloContext();
+
+
+    const [filteredTasks, setFilteredTasks] = useState([]);
 
     const [selectedFilters, setSelectedFilters] = useState(['All']);
     const [tempFilters, setTempFilters] = useState(['All']);
@@ -15,10 +16,6 @@ function Rightsidebar() {
     const [tempStatusFilters, setTempStatusFilters] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
-    useEffect(() => {
-        fetchUsersData && fetchUsersData();
-        fetchTasksData && fetchTasksData();
-    }, []);
 
     const handleTempFilterChange = (user) => {
         setTempFilters(prevFilters => {
@@ -46,7 +43,6 @@ function Rightsidebar() {
         setShowDropdown(false);
     };
 
-
     useEffect(() => {
         if (!allTasks.includes("Task is Empty")) {
             const filtered = allTasks.filter(task => {
@@ -73,7 +69,7 @@ function Rightsidebar() {
                 {isRightSidebarOpen && (
                     <div className="content p-3 h-[calc(100%-4rem)]">
                         <div className="relative mb-4">
-                            <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center justify-between w-full bg-gray-200 px-3 py-2 rounded-md text-black font-[500]">
+                            <button onClick={() => setShowDropdown(prevState => !prevState)} className="flex items-center justify-between w-full bg-gray-200 px-3 py-2 rounded-md text-black font-[500]">
                                 <span className="flex items-center">
                                     {selectedFilters.includes('All') ? 'All' : selectedFilters.join(', ')}
                                     {taskCount > 0 && (

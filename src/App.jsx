@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPageLayout from "./components/Login/LoginPageLayout";
 import UserLayout from "./components/User/UserLayout";
-import Admindashboard from "./components/Admin/Admindashboard";
 import { useAuthContext } from "./contexts/AuthContext";
 import HomeLayout from "./components/User/HomeLayout/HomeLayout";
 import BoardLayout from "./components/User/BoardLayout/BoardLayout";
 import ReportsLayout from "./components/User/ReportsLayout/ReportsLayout";
 import SettingsLayout from "./components/User/SettingsLayout/SettingsLayout";
+import AdminPanelLayout from "./components/Admin/AdminPanelLayout";
 
 function App() {
   const { currentUser, fetchInitialData } = useAuthContext();
@@ -43,6 +43,17 @@ function App() {
               <UserLayout>
                 {!currentUser ? <Navigate to="/" replace /> : currentUser.role === "admin" ? <HomeLayout /> : <HomeLayout />}
               </UserLayout>
+            }
+          />
+
+          <Route
+            path="/adminpanel"
+            element={
+              <ProtectedRoute>
+                <UserLayout>
+                  <AdminPanelLayout />
+                </UserLayout>
+              </ProtectedRoute>
             }
           />
 
